@@ -1,0 +1,10 @@
+
+library(shiny)
+library(DT)
+library(shinydashboard)
+library(dashboardthemes)
+library(tidyverse)
+library(plotly)
+library(dashboardthemes) # devtools::install_github("nik01010/dashboardthemes")
+library(readxl)
+library(janitor)
