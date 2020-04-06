@@ -2,8 +2,8 @@
 shinyServer(function(input, output, session) {
 
 Logged <- FALSE
-my_username <- "test"
-my_password <- "test"
+my_username <- "PujolBorrell"
+my_password <- "Covid19shinyVH2020"
   
 values <- reactiveValues(authenticated = FALSE)
 
@@ -53,6 +53,7 @@ obs2 <- observe({
 source("server-inputdata.R",local = TRUE)
 source("server-timeplots.R",local = TRUE)
 source("server-correlations.R",local = TRUE)
+# source("server-multivariate.R",local = TRUE)
 
 })
 

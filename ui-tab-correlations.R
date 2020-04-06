@@ -18,11 +18,14 @@ fluidRow(
   column(width = 8,
          
          fluidPage(
-           tabsetPanel(
-             tabPanel("Pairwise Correlation Scatterplot", 
-                      plotlyOutput("cor_plot"))
-             # tabPanel("Table of Correlations", dataTableOutput("corr_table"))
-           ))
+           
+           plotlyOutput("cor_plot")
+           # tabsetPanel(
+           #   tabPanel("Pairwise Correlation Scatterplot", 
+           #            plotlyOutput("cor_plot"))
+           #   tabPanel("Table of Correlations", dataTableOutput("corr_table"))
+           # )
+           )
 
   ))
 

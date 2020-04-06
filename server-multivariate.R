@@ -2,12 +2,12 @@
 observe({
   if(!is.null(datasetInput())){
     x <- colnames(datasetInput())
-    updateSelectInput(session, "one", choices = x, selected = x[grepl("il6", x)])
-    updateSelectInput(session, "two", choices = x, selected = x[grepl("pcr", x)])
+    updateSelectInput(session, "groups", choices = x, selected = x[grepl("gende", x)])
+    updateSelectInput(session, "mult_vars", choices = x, selected = x[grepl("pcr", x) | grepl("ig6", x) | grepl("neutr", x)])
   }
 })
 
-output$cor_plot <- renderPlotly({
+output$pca_plot <- renderPlotly({
   
   if(is.null(datasetInput())){
     return(NULL)
@@ -24,24 +24,25 @@ output$cor_plot <- renderPlotly({
       mutate(data_calendar = dmy(data_calendar)) %>%
       mutate_at(c("edad_number", "numero", "codi_extern"), as.character) %>%
       mutate_if(is.numeric, log) 
+
+    data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$groups)])
+    data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) %in% as.character(input$mult_vars)])
     
-    data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$one)])
-    data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$two)])
+    res_pca <- prcomp(na.omit(data_subset2), scale = TRUE, center = TRUE) 
     
-    data_subset <- bind_cols(data_subset1, data_subset2)
-    colnames(data_subset) <- c("Variable1", "Variable2")
+    res_pca2 <- data.frame(res_pca$x) %>% select(PC1, PC2)
+    # res_pca2 <- bind_cols(res_pca2, data_subset1)
+    # colnames(res_pca2)[3] <- "Group"
     
-    my_corr_plot <- ggplot(data_subset, aes(x = Variable1, y = Variable2)) + 
-      geom_point(alpha = 0.8, size = 1.5) +
-      xlab(paste0("log(", as.character(input$one), ")")) + 
-      ylab(paste0("log(", as.character(input$two), ")")) + 
-      ggtitle(paste0("R = ", round(cor(data_subset$Variable1, data_subset$Variable2, method = input$corr_method, use = "complete.obs"), 2))) +
-      # "pvalue = ", round(cor.test(data_subset$Variable1, data_subset$Variable1,method = input$corr_method)$p.value,3)))
-      theme_bw() + 
-      {if(isTRUE(input$smooth))geom_smooth(method = lm, color = input$smooth_color, na.rm = TRUE)} +
-      theme(legend.position = "none") 
+    #####
     
-    plotly::ggplotly(my_corr_plot)
+    my_pca_plot <- ggplot(res_pca2, aes(x = PC1, y = PC2, color = Group, shape = Group))+
+      geom_point(size = 3, alpha = 0.5) + 
+      xlab(paste0("PC1 (", round(100*((res_pca$sdev/sum(res_pca$sdev))[1]), 2), "%)")) +
+      ylab(paste0("PC2 (", round(100*((res_pca$sdev/sum(res_pca$sdev))[2]), 2), "%)")) +
+      theme_bw()
+    
+    plotly::ggplotly(my_pca_plot)
     
   }
   
