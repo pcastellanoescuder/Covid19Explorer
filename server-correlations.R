@@ -1,29 +1,21 @@
 
 observe({
-  if(!is.null(datasetInput())){
-    x <- colnames(datasetInput())
-    updateSelectInput(session, "one", choices = x, selected = x[grepl("il6", x)])
-    updateSelectInput(session, "two", choices = x, selected = x[grepl("pcr", x)])
+  if(!is.null(processedInput())){
+    x <- colnames(processedInput())
+    idx <- map(processedInput(), is.numeric) %>% unlist()
+    updateSelectInput(session, "one", choices = x[idx], selected = x[grepl("il6", x)])
+    updateSelectInput(session, "two", choices = x[idx], selected = x[grepl("pcr", x)])
   }
 })
 
 output$cor_plot <- renderPlotly({
   
-  if(is.null(datasetInput())){
+  if(is.null(processedInput())){
     return(NULL)
   } 
   else{
     
-    data_subset <- datasetInput() 
-    
-    if(!is.null(input$contents_rows_selected)){
-      data_subset <- data_subset[input$contents_rows_selected ,]
-    }
-    
-    data_subset <- data_subset %>%
-      mutate(data_calendar = dmy(data_calendar)) %>%
-      mutate_at(c("edad_number", "numero", "codi_extern"), as.character) %>%
-      mutate_if(is.numeric, log) 
+    data_subset <- processedInput()
     
     data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$one)])
     data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$two)])
@@ -51,12 +43,12 @@ output$cor_plot <- renderPlotly({
 
 # output$corr_table <- renderDataTable({
 #   
-#   if(is.null(datasetInput())){
+#   if(is.null(processedInput())){
 #     return(NULL)
 #   } 
 #   else{
 #     
-#     data_subset <- datasetInput() 
+#     data_subset <- processedInput() 
 #     
 #     if(!is.null(input$contents_rows_selected)){
 #       data_subset <- data_subset[input$contents_rows_selected ,]
