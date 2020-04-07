@@ -13,8 +13,12 @@ dashboardPage(
     dashboardSidebar(sidebarMenu(
       menuItem("Input Data", tabName = "inputdata", icon = icon("upload")),
       menuItem("Plots by Time", tabName = "timeplots", icon = icon("chart-line")),
-      menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"))
-      # menuItem("Multivariate", tabName = "multivariate", icon = icon("layer-group"))
+      menuItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
+      
+      menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
+      menuItem("Clustering", tabName = "cluster", icon = icon("object-group")),
+      menuItem("Gaussian Graphical Model", tabName = "ggm", icon = icon("project-diagram")),
+      menuItem("Help", tabName = "help", icon = icon("question"))
       
     )),
     
@@ -41,7 +45,7 @@ dashboardPage(
       tags$footer(p(strong("Pol Castellano Escuder, Paco Carmona Pontaque and Alex Sánchez Pla"), align="center", width=3),
                   p("Statistics and Bioinformatics Research Group", align="center", width=3),
                   p(("University of Barcelona"), align="center", width=3),
-                  p(("Copyright (C) 2020, app licensed under GPLv3"), align="center",width=4), align="center", width=4) #,
+                  p(("Copyright (C) 2020, app licensed under GPLv3"), align="center", width=4), align="center", width=4) #,
       
       ## GOOGLE ANALYTICS
       

@@ -41,3 +41,32 @@ ggplot(data_subset) +
   labs(color = "", shape = "")
 
 
+
+
+
+library(plyr)
+
+code <- as.data.frame(data$`Codi Extern`)
+data_subset1 <- as.data.frame(data$Leucòcits_Sang)
+data_subset2 <- as.data.frame(data$`Ferritina Fusion`)
+data_subset3 <- as.data.frame(data$Gender)
+
+data_subset <- bind_cols(code, data_subset1, data_subset2, data_subset3)
+colnames(data_subset) <- c("code", "Variable1", "Variable2", "Factor")
+
+cors <- plyr::ddply(data_subset, c("Factor"), summarise, cor = round(cor(Variable1, Variable2,
+                                                                         method = "pearson", use = "complete.obs"), 2))
+
+ggplot(data_subset) + 
+  geom_point(aes(x = Variable1, y = Variable2, color = Factor, label = code), alpha = 0.8, size = 1.5) +
+  theme_bw() + 
+  facet_wrap(~ Factor) +
+  geom_text(data = cors, aes(label = paste0("R = ", cor)),
+            x = quantile(data_subset$Variable1, na.rm = TRUE, probs = 0.75), 
+            y = quantile(data_subset$Variable2, na.rm = TRUE, probs = 0.25)) 
+
+
+
+
+
+

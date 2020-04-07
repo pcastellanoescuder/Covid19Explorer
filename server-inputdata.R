@@ -44,7 +44,7 @@ processedInput <- reactive({
     rename_at(vars(contains("serve")), ~ "servei") %>%
     mutate(tcz = as.factor(ifelse(is.na(tcz), 0, tcz))) %>% 
     mutate_if(is.numeric, log) %>%
-    rename_if(is.numeric, ~ paste0(., "_numeric")) %>%
+    rename_if(is.numeric, ~ paste0("logtrans_", .)) %>%
     rename_if(is.Date, ~ "data_calendar") %>%
     arrange(desc(data_calendar))
   
