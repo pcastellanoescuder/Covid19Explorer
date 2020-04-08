@@ -9,8 +9,9 @@ fluidRow(
                           "Gender" = "gender",
                           "Subject" = "subject",
                           "Service" = "service"),
-                        selected = "subject")
-           # checkboxInput("remove_rep", "Remove repeated measures", TRUE)
+                        selected = "subject"),
+           
+           checkboxInput("plot_lines", "Show lines", TRUE)
   
   )),
   

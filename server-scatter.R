@@ -63,22 +63,27 @@ output$cor_plot <- renderPlot({
   }
   
   my_corr_plot <- ggplot(keep) + 
-    {if(input$my_factor == "None")geom_point(aes(x = Variable1, y = Variable2, label = code), alpha = 0.8, size = 3)} +
-    {if(input$my_factor != "None")geom_point(aes(x = Variable1, y = Variable2, color = Factor, shape = Factor, label = code), alpha = 0.8, size = 3)} +
+    {if(input$my_factor == "None")geom_point(aes(x = Variable1, y = Variable2, label = code), alpha = 0.75, size = 3)} +
+    {if(input$my_factor != "None")geom_point(aes(x = Variable1, y = Variable2, color = Factor, shape = Factor, label = code), alpha = 0.75, size = 3)} +
     
     geom_point(data = exclude, aes(x = Variable1, y = Variable2, label = code), shape = 21, fill = NA, color = "black", alpha = 0.25, size = 3) +
     
     xlab(as.character(input$one)) + 
     ylab(as.character(input$two)) + 
-    {if(!isTRUE(input$facet_factor))ggtitle(paste0("R = ", 
-                                                  round(cor(keep$Variable1, keep$Variable2, 
-                                                            method = input$corr_method, use = "complete.obs"), 2)))} +
+    {if(!isTRUE(input$facet_factor))geom_text(aes(label = paste0("R = ", round(cor(keep$Variable1, keep$Variable2,
+                                                                                   method = input$corr_method,
+                                                                                   use = "complete.obs"), 2))),
+                                              x = max(keep$Variable1, na.rm = TRUE),
+                                              y = min(keep$Variable2, na.rm = TRUE),
+                                              vjust = "inward", hjust = "inward", check_overlap = TRUE, size = 5)} +
+
     theme_bw() + 
     {if(isTRUE(input$smooth))geom_smooth(aes(x = Variable1, y = Variable2), method = lm, color = input$smooth_color, na.rm = TRUE)} +
     {if(isTRUE(input$facet_factor) & input$my_factor != "None")facet_wrap(~ Factor)} +
-    {if(isTRUE(input$facet_factor) & input$my_factor != "None" & isTRUE(input$showR))geom_text(data = cors, aes(label = paste0("R = ", cor)), 
-                                                                         x = quantile(keep$Variable1, na.rm = TRUE, probs = 0.85), 
-                                                                         y = quantile(keep$Variable2, na.rm = TRUE, probs = 0.25), size = 6)} +
+    {if(isTRUE(input$facet_factor) & input$my_factor != "None" & isTRUE(input$showR))geom_text(data = cors, aes(label = paste0("R = ", cor)),
+                                                                                               x = max(keep$Variable1, na.rm = TRUE),
+                                                                                               y = min(keep$Variable2, na.rm = TRUE),
+                                                                                               vjust = "inward", hjust = "inward", check_overlap = TRUE, size = 5)} +
     {if(isTRUE(input$showL) & input$my_factor != "None")geom_label(aes(x = Variable1, y = Variable2, label = code, color = Factor), size = 5, show.legend = F)} +
     {if(isTRUE(input$showL) & input$my_factor == "None")geom_label(aes(x = Variable1, y = Variable2, label = code), size = 5, show.legend = F)} +
     theme(legend.position = "top",

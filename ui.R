@@ -13,11 +13,14 @@ dashboardPage(
     dashboardSidebar(sidebarMenu(
       menuItem("Input Data", tabName = "inputdata", icon = icon("upload")),
       menuItem("Plots by Time", tabName = "timeplots", icon = icon("chart-line")),
-      menuItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
+      menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"), startExpanded = FALSE,
+               menuSubItem("Scatterplot", tabName = "scatter"),
+               menuSubItem("Global Correlation Plot", tabName = "correlogram"),
+               menuSubItem("Network Visualization", tabName = "network")),
       
-      menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
-      menuItem("Clustering", tabName = "cluster", icon = icon("object-group")),
-      menuItem("Gaussian Graphical Model", tabName = "ggm", icon = icon("project-diagram")),
+      # menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
+      # menuItem("Clustering", tabName = "cluster", icon = icon("object-group")),
+      # menuItem("Gaussian Graphical Model", tabName = "ggm", icon = icon("project-diagram")),
       menuItem("Help", tabName = "help", icon = icon("question"))
       
     )),
@@ -32,10 +35,12 @@ dashboardPage(
                 source("ui-tab-inputdata.R",local=TRUE)$value),
         tabItem(tabName = "timeplots",
                 source("ui-tab-timeplots.R",local=TRUE)$value),
-        tabItem(tabName = "correlations",
-                source("ui-tab-correlations.R",local=TRUE)$value)
-        # tabItem(tabName = "multivariate",
-        #         source("ui-tab-multivariate.R",local=TRUE)$value)
+        tabItem(tabName = "scatter",
+                source("ui-tab-scatter.R",local=TRUE)$value),
+        tabItem(tabName = "correlogram",
+                source("ui-tab-correlogram.R",local=TRUE)$value),
+        tabItem(tabName = "network",
+                source("ui-tab-network.R",local=TRUE)$value)
       ),
       
       tags$hr(),

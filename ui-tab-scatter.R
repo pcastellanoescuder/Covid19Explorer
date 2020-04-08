@@ -29,7 +29,7 @@ fluidRow(
          
          fluidPage(
            
-           plotOutput("cor_plot", click = "plot1_click", brush = brushOpts(id = "plot1_brush")) # , height = "500px"
+           plotOutput("cor_plot", click = "plot1_click", brush = brushOpts(id = "plot1_brush"), height = "520px")
            )
 
   ))

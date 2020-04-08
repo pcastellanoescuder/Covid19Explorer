@@ -44,7 +44,7 @@ processedInput <- reactive({
     rename_at(vars(contains("serve")), ~ "servei") %>%
     mutate(tcz = as.factor(ifelse(is.na(tcz), 0, tcz))) %>% 
     mutate_if(is.numeric, log) %>%
-    rename_if(is.numeric, ~ paste0("logtrans_", .)) %>%
+    rename_if(is.numeric, ~ paste0(., "_log")) %>%
     rename_if(is.Date, ~ "data_calendar") %>%
     arrange(desc(data_calendar))
   
@@ -52,6 +52,8 @@ processedInput <- reactive({
   #     group_by(codi_extern, data_calendar) %>% 
   #     slice(n(), 1) %>% # last measuse of each subject
   #     ungroup()
+
+  data_subset[data_subset == -Inf] <- log(0.01) 
   
   return(data_subset)
   

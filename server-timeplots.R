@@ -23,12 +23,12 @@ output$timeplots <- renderPlotly({
   data_subset <- processedInput()
   
   data_subset <- data_subset %>%
-    pivot_longer(cols = starts_with("logtrans_")) %>% 
+    pivot_longer(cols = ends_with("_log")) %>% 
     dplyr::rename(variable = name) %>%
     dplyr::filter(variable %in% input$features)
 
   my_time_plot <- ggplot(data_subset) +
-    {if(input$wrap_into == "subject")geom_line(aes(data_calendar, value, color = variable, shape = variable, label = codi_extern), 
+    {if(isTRUE(input$plot_lines))geom_line(aes(data_calendar, value, color = variable, shape = variable, label = codi_extern), 
                                                size = 1, alpha = 0.6)} +
     geom_point(aes(data_calendar, value, color = variable, shape = variable, label = codi_extern), size = 1.2) +
     ylab("log(variables)") +
