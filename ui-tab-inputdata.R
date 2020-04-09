@@ -10,10 +10,8 @@ tabPanel("Upload Data",
            column(9,
                   
                   tabsetPanel(
-                    tabPanel("Raw Data", 
-                             div(style = 'overflow-x: scroll', DT::dataTableOutput("contents"), width = NULL, status = "primary")),
-                    tabPanel("Processed Data",
-                             div(style = 'overflow-x: scroll', DT::dataTableOutput("contents_proc"), width = NULL, status = "primary"))
+                    tabPanel("Raw Data", DT::dataTableOutput("contents")),
+                    tabPanel("Processed Data", DT::dataTableOutput("contents_proc"))
                   
                   ))
            )

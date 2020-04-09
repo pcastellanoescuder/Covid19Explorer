@@ -8,6 +8,9 @@ datasetInput <- reactive({
     }
   else {
     data <- readxl::read_excel(infile$datapath)
+    data <- data %>% 
+      mutate(num_var = apply(data, 1, function(x)sum(!is.na(x)))) %>%
+      dplyr::select(num_var, everything())
     return(data)
     }
 })
@@ -31,6 +34,7 @@ processedInput <- reactive({
   }
   
   data_subset <- data_subset %>%
+    dplyr::select(-num_var) %>%
     janitor::clean_names() %>%
     mutate_at(vars(contains("data")), dmy) %>% 
     mutate_at(vars(contains("edad")), as.character) %>%        
@@ -63,7 +67,44 @@ processedInput <- reactive({
 
 ####
 
-output$contents <- DT::renderDataTable(datasetInput(), class = 'cell-border stripe', rownames = FALSE, server = TRUE)
+output$contents <- DT::renderDataTable({
+  
+  my_raw <- datasetInput()
+  
+  DT::datatable(my_raw, 
+                filter = 'top',extensions = 'Buttons',
+                escape = T,  rownames = FALSE, 
+                class = 'cell-border stripe',
+                options = list(
+                  scrollX = TRUE,
+                  stateSave = FALSE,
+                  # default column search strings and global search string
+                  search = list(regex = TRUE, caseInsensitive = FALSE)
+                ))
+  
+})
+
+# output$contents <- renderD3tf({
+#   
+#   # Define table properties. See http://tablefilter.free.fr/doc.php
+#   # for a complete reference
+#   tableProps <- list(
+#     btn_reset = TRUE,
+#     # alphabetic sorting for the row names column, numeric for all other columns
+#     col_types = c("string", rep("number", ncol(datasetInput())))
+#   );
+#   
+#   d3tf(datasetInput(),
+#        tableProps = tableProps,
+#        extensions = list(
+#          list(name = "sort")
+#        ),
+#        showRowNames = FALSE,
+#        selectableRows = "multi",
+#        selectableRowsClass = "success",
+#        tableStyle = "table table-bordered");
+#   
+# })
 
 ####
 
@@ -76,6 +117,7 @@ output$contents_proc <- DT::renderDataTable({
                 escape = FALSE,  rownames = FALSE, 
                 class = 'cell-border stripe',
                 options = list(
+                  scrollX = TRUE,
                   dom = 'Bfrtip',
                   buttons = 
                     list("copy", "print", list(
