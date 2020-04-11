@@ -1,20 +1,18 @@
 
 output$network_plot <- renderPlot({
   
-  data_numeric <- processedInput() %>% 
-    select_if(is.numeric) 
-
-  ## Imputation
+  data_subset <- processedInput() %>%
+    select(-complete_vars, -time_points)
   
-  # data_numeric <- data.frame(t(impute::impute.knn(t(data_numeric), colmax = 100)$data))
+  if(!is.null(input$contents_proc_rows_selected)){
+    data_subset <- data_subset[input$contents_proc_rows_selected ,]
+  } 
+  else{
+    data_subset <- data_subset
+  }
   
-  data_numeric <- data_numeric %>%
-    select(-starts_with("troponi")) %>%
-    select(-starts_with("vsg")) %>%
-    select(-starts_with("s_cd25")) %>%
-    select(-starts_with("srm_trig")) # too much NA's
-    
-  ##
+  data_numeric <- data_subset %>%
+    select_if(is.numeric)
   
   cor_matrix2 <- round(cor(data_numeric, use = "pairwise.complete.obs"), 3)
   

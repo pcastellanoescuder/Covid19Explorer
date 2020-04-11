@@ -1,8 +1,20 @@
 
 observe({
   if(!is.null(processedInput())){
-    x <- colnames(processedInput())
-    idx <- map(processedInput(), is.numeric) %>% unlist()
+    
+    data_subset <- processedInput() %>%
+      select(-complete_vars, -time_points, -age)
+    
+    if(!is.null(input$contents_proc_rows_selected)){
+      data_subset <- data_subset[input$contents_proc_rows_selected ,]
+    } 
+    else{
+      data_subset <- data_subset
+    }
+    
+    x <- colnames(data_subset)
+    
+    idx <- map(data_subset, is.numeric) %>% unlist()
     updateSelectInput(session, "features", choices = x[idx], selected = x[grepl("il6", x)])
   }
 })
@@ -14,30 +26,38 @@ output$timeplots <- renderPlotly({
   } 
   else{
     
-  if(is.null(input$contents_rows_selected)){
+  if(is.null(input$contents_proc_rows_selected)){
     return(NULL)
   }
   
   else{
   
-  data_subset <- processedInput()
+    data_subset <- processedInput() %>%
+      select(-complete_vars, -time_points)
+    
+    if(!is.null(input$contents_proc_rows_selected)){
+      data_subset <- data_subset[input$contents_proc_rows_selected ,]
+    } 
+    else{
+      data_subset <- data_subset
+    }
   
   data_subset <- data_subset %>%
-    pivot_longer(cols = ends_with("_log")) %>% 
+    pivot_longer(cols = ends_with("_trans")) %>% 
     dplyr::rename(variable = name) %>%
     dplyr::filter(variable %in% input$features)
 
   my_time_plot <- ggplot(data_subset) +
-    {if(isTRUE(input$plot_lines))geom_line(aes(data_calendar, value, color = variable, shape = variable, label = codi_extern), 
+    {if(isTRUE(input$plot_lines))geom_line(aes(date, value, color = variable, shape = variable, label = subject_code), 
                                                size = 1, alpha = 0.6)} +
-    geom_point(aes(data_calendar, value, color = variable, shape = variable, label = codi_extern), size = 1.2) +
+    geom_point(aes(date, value, color = variable, shape = variable, label = subject_code), size = 1.2) +
     ylab("log(variables)") +
     xlab("") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     {if(input$wrap_into == "gender")facet_wrap(vars(gender))} +
-    {if(input$wrap_into == "service")facet_wrap(vars(servei))} +
-    {if(input$wrap_into == "subject")facet_wrap(vars(codi_extern))} +
+    {if(input$wrap_into == "service")facet_wrap(vars(service))} +
+    {if(input$wrap_into == "subject")facet_wrap(vars(subject_code))} +
     labs(color = "", shape = "")
   
   plotly::ggplotly(my_time_plot)

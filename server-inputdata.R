@@ -8,9 +8,6 @@ datasetInput <- reactive({
     }
   else {
     data <- readxl::read_excel(infile$datapath)
-    data <- data %>% 
-      mutate(num_var = apply(data, 1, function(x)sum(!is.na(x)))) %>%
-      dplyr::select(num_var, everything())
     return(data)
     }
 })
@@ -26,38 +23,41 @@ processedInput <- reactive({
   
   data <- datasetInput()
   
-  if(!is.null(input$contents_rows_selected)){
-    data_subset <- data[input$contents_rows_selected ,]
-  } 
-  else{
-    data_subset <- data
+  data_subset <- data %>%
+    janitor::clean_names() %>% # clean column names
+    mutate_at(vars(contains("data")), dmy) %>% # modify var type
+    mutate_at(vars(contains("edad")), as.character) %>% # modify var type
+    mutate_at(vars(contains("numer")), as.character) %>% # modify var type
+    mutate_at(vars(contains("codi")), as.character) %>% # modify var type
+    mutate_at(vars(contains("seguim")), as.character) %>% # modify var type
+    mutate_at(vars(contains("gend")), as.factor) %>% # modify var type
+    mutate_at(vars(contains("serve")), as.factor) %>% # modify var type
+    rename_at(vars(contains("codi")), ~ "subject_code") %>% # modify var name
+    rename_at(vars(contains("gend")), ~ "gender") %>% # modify var name
+    rename_at(vars(contains("serve")), ~ "service") %>% # modify var name
+    rename_at(vars(contains("edad")), ~ "age") %>% # modify var name
+    mutate(tcz = as.factor(ifelse(is.na(tcz), 0, tcz))) %>% # replace NA by 0 and modify type var
+    select_if(~ !(sum(is.na(.))/nrow(data))*100 > input$removeNA) %>% # remove na
+    mutate_if(is.numeric, function(x)ifelse(x == 0, input$replaceZeros, x)) %>% # replace zeros
+    mutate_if(is.numeric, input$transformation_type) %>% # transformation
+    rename_if(is.numeric, ~ paste0(., "_", input$transformation_type, "_trans")) %>% # modify numeric var names
+    rename_if(is.Date, ~ "date") %>% # modify var name
+    mutate(age = as.numeric(age)) %>% # return age to numerical
+    mutate(complete_vars = apply(data, 1, function(x)sum(!is.na(x)))) %>% # create complete variables count
+    dplyr::group_by(subject_code) %>% # create time points var
+    add_count(name = "time_points") %>% # create time points var
+    dplyr::ungroup() %>% # create time points var
+    select(complete_vars, time_points, everything()) # reorder columns
+    
+  #### choose fist and last point of each subject
+  
+  if(isTRUE(input$first_last)){
+    data_subset <- data_subset %>% 
+      arrange(date) %>%
+      group_by(subject_code) %>% 
+      slice(1L, n())
+    data_subset <-  data_subset[!duplicated(data_subset) ,]
   }
-  
-  data_subset <- data_subset %>%
-    dplyr::select(-num_var) %>%
-    janitor::clean_names() %>%
-    mutate_at(vars(contains("data")), dmy) %>% 
-    mutate_at(vars(contains("edad")), as.character) %>%        
-    mutate_at(vars(contains("numer")), as.character) %>%  
-    mutate_at(vars(contains("codi")), as.character) %>% 
-    mutate_at(vars(contains("seguim")), as.character) %>% 
-    mutate_at(vars(contains("gend")), as.factor) %>% 
-    mutate_at(vars(contains("serve")), as.factor) %>% 
-    rename_at(vars(contains("codi")), ~ "codi_extern") %>%
-    rename_at(vars(contains("gend")), ~ "gender") %>%
-    rename_at(vars(contains("serve")), ~ "servei") %>%
-    mutate(tcz = as.factor(ifelse(is.na(tcz), 0, tcz))) %>% 
-    mutate_if(is.numeric, log) %>%
-    rename_if(is.numeric, ~ paste0(., "_log")) %>%
-    rename_if(is.Date, ~ "data_calendar") %>%
-    arrange(desc(data_calendar))
-  
-  #   data_subset <- data_subset %>%
-  #     group_by(codi_extern, data_calendar) %>% 
-  #     slice(n(), 1) %>% # last measuse of each subject
-  #     ungroup()
-
-  data_subset[data_subset == -Inf] <- log(0.01) 
   
   return(data_subset)
   
@@ -72,39 +72,13 @@ output$contents <- DT::renderDataTable({
   my_raw <- datasetInput()
   
   DT::datatable(my_raw, 
-                filter = 'top',extensions = 'Buttons',
+                filter = 'none',extensions = 'Buttons',
                 escape = T,  rownames = FALSE, 
                 class = 'cell-border stripe',
                 options = list(
-                  scrollX = TRUE,
-                  stateSave = FALSE,
-                  # default column search strings and global search string
-                  search = list(regex = TRUE, caseInsensitive = FALSE)
-                ))
+                  scrollX = TRUE))
   
 })
-
-# output$contents <- renderD3tf({
-#   
-#   # Define table properties. See http://tablefilter.free.fr/doc.php
-#   # for a complete reference
-#   tableProps <- list(
-#     btn_reset = TRUE,
-#     # alphabetic sorting for the row names column, numeric for all other columns
-#     col_types = c("string", rep("number", ncol(datasetInput())))
-#   );
-#   
-#   d3tf(datasetInput(),
-#        tableProps = tableProps,
-#        extensions = list(
-#          list(name = "sort")
-#        ),
-#        showRowNames = FALSE,
-#        selectableRows = "multi",
-#        selectableRowsClass = "success",
-#        tableStyle = "table table-bordered");
-#   
-# })
 
 ####
 
@@ -113,7 +87,7 @@ output$contents_proc <- DT::renderDataTable({
   my_processed <- processedInput()
   
   DT::datatable(my_processed, 
-                filter = 'none',extensions = 'Buttons',
+                filter = 'top',extensions = 'Buttons',
                 escape = FALSE,  rownames = FALSE, 
                 class = 'cell-border stripe',
                 options = list(

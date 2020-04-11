@@ -1,10 +1,21 @@
 
 observe({
   if(!is.null(processedInput())){
-    x <- colnames(processedInput())
     
-    idx <- map(processedInput(), is.numeric) %>% unlist()
-    idx2 <- map(processedInput(), is.factor) %>% unlist()
+    data_subset <- processedInput() %>%
+      select(-complete_vars, -time_points)
+    
+    if(!is.null(input$contents_proc_rows_selected)){
+      data_subset <- data_subset[input$contents_proc_rows_selected ,]
+    } 
+    else{
+      data_subset <- data_subset
+    }
+    
+    x <- colnames(data_subset)
+    
+    idx <- map(data_subset, is.numeric) %>% unlist()
+    idx2 <- map(data_subset, is.factor) %>% unlist()
     
     updateSelectInput(session, "one", choices = x[idx], selected = x[grepl("il6", x)])
     updateSelectInput(session, "two", choices = x[idx], selected = x[grepl("pcr", x)])
@@ -20,9 +31,17 @@ Createdata <- reactive({
   } 
   else{
     
-    data_subset <- processedInput()
+    data_subset <- processedInput() %>%
+      select(-complete_vars, -time_points)
     
-    code <- as.data.frame(data_subset[, colnames(data_subset) == "codi_extern"])
+    if(!is.null(input$contents_proc_rows_selected)){
+      data_subset <- data_subset[input$contents_proc_rows_selected ,]
+    } 
+    else{
+      data_subset <- data_subset
+    }
+    
+    code <- as.data.frame(data_subset[, colnames(data_subset) == "subject_code"])
     data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$one)])
     data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$two)])
     
