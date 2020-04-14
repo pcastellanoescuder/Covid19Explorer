@@ -8,7 +8,7 @@ fluidRow(
                         c("No split" = "none",
                           "Gender" = "gender",
                           "Subject" = "subject",
-                          "Service" = "service"),
+                          "Department" = "department"),
                         selected = "subject"),
            
            checkboxInput("plot_lines", "Show lines", TRUE)

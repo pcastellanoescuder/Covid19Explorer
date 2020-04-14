@@ -18,7 +18,7 @@ observe({
     idx2 <- map(data_subset, is.factor) %>% unlist()
     
     updateSelectInput(session, "one", choices = x[idx], selected = x[grepl("il6", x)])
-    updateSelectInput(session, "two", choices = x[idx], selected = x[grepl("pcr", x)])
+    updateSelectInput(session, "two", choices = x[idx], selected = x[grepl("reactive_prote", x)])
     
     updateSelectInput(session, "my_factor", choices = c("None", x[idx2]), selected = "None")
   }
@@ -37,11 +37,8 @@ Createdata <- reactive({
     if(!is.null(input$contents_proc_rows_selected)){
       data_subset <- data_subset[input$contents_proc_rows_selected ,]
     } 
-    else{
-      data_subset <- data_subset
-    }
     
-    code <- as.data.frame(data_subset[, colnames(data_subset) == "subject_code"])
+    code <- as.data.frame(data_subset[, colnames(data_subset) == "record_num_hvh"])
     data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$one)])
     data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$two)])
     
@@ -72,7 +69,7 @@ output$cor_plot <- renderPlot({
   keep <- data_subset[vals$keeprows, , drop = FALSE]
   exclude <- data_subset[!vals$keeprows, , drop = FALSE]
   
-  if(isTRUE(input$showR) & input$my_factor != "None"){
+  if(input$my_factor != "None"){
     
     cors <- plyr::ddply(keep, c("Factor"), summarise, cor = round(cor(Variable1, Variable2, use = "complete.obs"), 2))
     
@@ -99,10 +96,10 @@ output$cor_plot <- renderPlot({
     theme_bw() + 
     {if(isTRUE(input$smooth))geom_smooth(aes(x = Variable1, y = Variable2), method = lm, color = input$smooth_color, na.rm = TRUE)} +
     {if(isTRUE(input$facet_factor) & input$my_factor != "None")facet_wrap(~ Factor)} +
-    {if(isTRUE(input$facet_factor) & input$my_factor != "None" & isTRUE(input$showR))geom_text(data = cors, aes(label = paste0("R = ", cor)),
-                                                                                               x = max(keep$Variable1, na.rm = TRUE),
-                                                                                               y = min(keep$Variable2, na.rm = TRUE),
-                                                                                               vjust = "inward", hjust = "inward", check_overlap = TRUE, size = 5)} +
+    {if(isTRUE(input$facet_factor) & input$my_factor != "None")geom_text(data = cors, aes(label = paste0("R = ", cor)),
+                                                                                          x = max(keep$Variable1, na.rm = TRUE),
+                                                                                          y = min(keep$Variable2, na.rm = TRUE),
+                                                                                          vjust = "inward", hjust = "inward", check_overlap = TRUE, size = 5)} +
     {if(isTRUE(input$showL) & input$my_factor != "None")geom_label(aes(x = Variable1, y = Variable2, label = code, color = Factor), size = 5, show.legend = F)} +
     {if(isTRUE(input$showL) & input$my_factor == "None")geom_label(aes(x = Variable1, y = Variable2, label = code), size = 5, show.legend = F)} +
     theme(legend.position = "top",

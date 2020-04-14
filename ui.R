@@ -12,6 +12,7 @@ dashboardPage(
   
     dashboardSidebar(sidebarMenu(
       menuItem("Input Data", tabName = "inputdata", icon = icon("upload")),
+      # menuItem("Density Plots", tabName = "density", icon = icon("search")),
       menuItem("Plots by Time", tabName = "timeplots", icon = icon("chart-line")),
       menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"), startExpanded = FALSE,
                menuSubItem("Scatterplot", tabName = "scatter"),
@@ -33,6 +34,8 @@ dashboardPage(
       tabItems(
         tabItem(tabName = "inputdata",
                 source("ui-tab-inputdata.R",local=TRUE)$value),
+        # tabItem(tabName = "density",
+        #         source("ui-tab-density.R",local=TRUE)$value),
         tabItem(tabName = "timeplots",
                 source("ui-tab-timeplots.R",local=TRUE)$value),
         tabItem(tabName = "scatter",

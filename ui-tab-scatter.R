@@ -8,7 +8,6 @@ fluidRow(
                   
                   selectInput("my_factor", label = "Select a factor:", choices = NULL),
                   checkboxInput("facet_factor", "Facet by factor"),
-                  checkboxInput("showR", "Show facet correlation coefficients (pearson)"),
                   checkboxInput("showL", "Show labels"),
                   
                   checkboxInput("smooth", "Smooth line (lm)"),

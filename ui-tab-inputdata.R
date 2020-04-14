@@ -7,16 +7,35 @@ tabPanel("Upload Data",
                     
                     fileInput("dataset","Upload your data (.xlsx):"),
                     
-                    sliderInput("removeNA", "Allowed % missing values in each column:", min = 0, max = 100, step = 1, value = 70),
+                    radioButtons("summarize_points", "Summarize data for each subject:", 
+                                 choices = c("Show all observations" = 'all',
+                                             "Show the first and last observation" = 'first_last',
+                                             "Show the first observation" = 'first',
+                                             "Show the last observation" = 'last'),
+                                 selected = 'all'),
                     
-                    numericInput("replaceZeros", "Replace zeros by:", value = 0.01),
+                    prettySwitch("showadvanced", "Advanced settings", fill = T, status = "warning"),
                     
-                    selectizeInput("transformation_type", "Transformation type:", choices = c("log", "log2", "log10", "sqrt")),
+                    conditionalPanel(condition = "input.showadvanced",
+                                     
+                                     sliderInput("removeNA", "Allowed % missing values in each column:", min = 0, max = 100, step = 1, value = 70),
+                                     
+                                     numericInput("replaceZeros", "Replace zeros by:", value = 0.01),
+                                     
+                                     selectizeInput("transformation_log", "log transformation:", choices = NULL, multiple = TRUE),
+                                     selectizeInput("transformation_log2", "log2 transformation:", choices = NULL, multiple = TRUE),
+                                     selectizeInput("transformation_log10", "log10 transformation:", choices = NULL, multiple = TRUE),
+                                     selectizeInput("transformation_sqrt", "sqrt transformation:", choices = NULL, multiple = TRUE)
+                                     
+                                     ),
                     
-                    checkboxInput("first_last", "Show only the first and last observation of each subject", FALSE),
-                    
-                    helpText(strong("Select the desired observations in",
-                             "the 'Processed Data' panel")))
+                    actionButton("process","Process", icon("step-forward"),
+                                 style="color: #fff; background-color: #00b300; border-color: #009900") %>% helper(type = "markdown",
+                                                                                                                   title = "Process Data Helper",
+                                                                                                                   content = "process",
+                                                                                                                   icon = "question",
+                                                                                                                   colour = "green")
+                    )
          ),
            
            column(9,
