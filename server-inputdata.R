@@ -14,7 +14,7 @@ observe({
     my_data_names <- data %>%
       select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
       janitor::clean_names() %>% # clean column names
-      select(-date_sample, -record_num_hvh, -sample_num, -age_years, -gender, -department, 
+      dplyr::select(-date_sample, -record_num_hvh, -sample_num, -age_years, -gender, -department, 
              -area_of_care, -outcome, -follow_up_days, -follow_up_samples_total_n, -tzc_onset, -tzc_final)
 
     x <- colnames(my_data_names)
@@ -82,7 +82,7 @@ processedInput <- eventReactive(input$process,
                                         
                                         if(input$trans_data){
                                           data_subset <- data_subset %>%
-                                            mutate(date_sample = excel_numeric_to_date(as.numeric(as.character(date_sample)))) # format date
+                                            mutate(date_sample = janitor::excel_numeric_to_date(as.numeric(as.character(date_sample)))) # format date
                                         } 
                                       
                                         else{
@@ -134,7 +134,7 @@ processedInput <- eventReactive(input$process,
                                           dplyr::group_by(record_num_hvh) %>% # create time points var
                                           add_count(name = "time_points") %>% # create time points var
                                           dplyr::ungroup() %>% # create time points var
-                                          select(complete_vars, time_points, everything()) # reorder columns
+                                          dplyr::select(complete_vars, time_points, everything()) # reorder columns
                                         
                                       
                                       if(input$summarize_points != 'all'){
@@ -143,10 +143,10 @@ processedInput <- eventReactive(input$process,
                                         
                                         if(input$summarize_points == 'first_last'){
                                           data_subset <- data_subset %>% 
-                                            arrange(date) %>%
-                                            group_by(record_num_hvh) %>% 
-                                            slice(1L, n()) %>%
-                                            ungroup()
+                                            dplyr::arrange(date) %>%
+                                            dplyr::group_by(record_num_hvh) %>% 
+                                            dplyr::slice(1L, n()) %>%
+                                            dplyr::ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                         
@@ -154,10 +154,10 @@ processedInput <- eventReactive(input$process,
                                         
                                         if(input$summarize_points == 'first'){
                                           data_subset <- data_subset %>% 
-                                            arrange(date) %>%
-                                            group_by(record_num_hvh) %>% 
-                                            slice(1L) %>%
-                                            ungroup()
+                                            dplyr::arrange(date) %>%
+                                            dplyr::group_by(record_num_hvh) %>% 
+                                            dplyr::slice(1L) %>%
+                                            dplyr::ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                         
@@ -165,10 +165,10 @@ processedInput <- eventReactive(input$process,
                                         
                                         if(input$summarize_points == 'last'){
                                           data_subset <- data_subset %>% 
-                                            arrange(date) %>%
-                                            group_by(record_num_hvh) %>% 
-                                            slice(n()) %>%
-                                            ungroup()
+                                            dplyr::arrange(date) %>%
+                                            dplyr::group_by(record_num_hvh) %>% 
+                                            dplyr::slice(n()) %>%
+                                            dplyr::ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                       }
