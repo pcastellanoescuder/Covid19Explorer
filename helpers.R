@@ -16,5 +16,6 @@ library(qgraph)
 
 library(shinyWidgets)
 library(shinyhelper)
+library(patchwork)
 
 

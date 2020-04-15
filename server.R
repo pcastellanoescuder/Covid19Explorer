@@ -51,7 +51,7 @@ shinyServer(function(input, output, session) {
 # })
 
 source("server-inputdata.R",local = TRUE)
-# source("server-density.R",local = TRUE)
+source("server-density.R",local = TRUE)
 source("server-timeplots.R",local = TRUE)
 source("server-scatter.R",local = TRUE)
 source("server-correlogram.R",local = TRUE)

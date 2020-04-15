@@ -7,6 +7,10 @@ tabPanel("Upload Data",
                     
                     fileInput("dataset","Upload your data (.xlsx):"),
                     
+                    checkboxInput("remove_first", "Remove first row", TRUE),
+                    
+                    checkboxInput("trans_data", "Format your date column (from xlsx to date)", TRUE),
+                    
                     radioButtons("summarize_points", "Summarize data for each subject:", 
                                  choices = c("Show all observations" = 'all',
                                              "Show the first and last observation" = 'first_last',
@@ -17,6 +21,13 @@ tabPanel("Upload Data",
                     prettySwitch("showadvanced", "Advanced settings", fill = T, status = "warning"),
                     
                     conditionalPanel(condition = "input.showadvanced",
+                                     
+                                     # conditionalPanel(condition = "!input.trans_data",
+                                     #                  radioButtons("date_format", "Select your date column format:", 
+                                     #                               choices = c("yyyy/mm/dd" = 'ymd',
+                                     #                                           "dd/mm/yyyy" = 'dmy',
+                                     #                                           "mm/dd/yyyy" = 'mdy'),
+                                     #                               selected = 'ymd')),
                                      
                                      sliderInput("removeNA", "Allowed % missing values in each column:", min = 0, max = 100, step = 1, value = 70),
                                      

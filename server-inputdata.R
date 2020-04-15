@@ -4,22 +4,18 @@ observe_helpers(help_dir = "help_mds")
 observe({
   if(!is.null(datasetInput())){
 
-    data <- datasetInput()
+    if(isTRUE(input$remove_first)){
+      data <- datasetInput() %>% 
+        slice(-1) # remove first now
+    }else{
+      data <- datasetInput()
+    }
+    
     my_data_names <- data %>%
-      # slice(-1) %>%
+      select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
       janitor::clean_names() %>% # clean column names
-      mutate_all(as.numeric) %>%
-      mutate_at(vars(contains("gender")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("department")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("area")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("outcome")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("age")), as.character) %>% # modify var type
-      mutate_at(vars(contains("record")), as.character) %>% # modify var type
-      mutate_at(vars(contains("sample_nu")), as.character) %>% # modify var type
-      mutate_at(vars(contains("follow_up_days")), as.character) %>% # modify var type
-      mutate_at(vars(contains("follow_up_samples")), as.character) %>% # modify var type
-      mutate_at(vars(contains("tzc")), as.character) %>% # modify var type
-      select_if(is.numeric) # select only numeric vars
+      select(-date_sample, -record_num_hvh, -sample_num, -age_years, -gender, -department, 
+             -area_of_care, -outcome, -follow_up_days, -follow_up_samples_total_n, -tzc_onset, -tzc_final)
 
     x <- colnames(my_data_names)
 
@@ -65,53 +61,81 @@ processedInput <- eventReactive(input$process,
                                              HTML("Please, fill ALL the transformation options in the 'Advanced settings' panel. If you don't want to use some of them please, select 'None'."))
                                       )
                                       
-                                      data <- datasetInput()
-                                      my_dates <- data$Date_sample
+                                      if(isTRUE(input$remove_first)){
+                                        data <- datasetInput() %>% 
+                                          slice(-1) # remove first now
+                                      }else{
+                                        data <- datasetInput()
+                                      }
+                                      
+                                      no_num <- c("date_sample", "record_num_hvh", "sample_num", 
+                                                  "age_years", "gender", "department", 
+                                                  "area_of_care", "outcome", "follow_up_days", 
+                                                  "follow_up_samples_total_n", "tzc_onset", "tzc_final")
                                       
                                       data_subset <- data %>%
-                                        # slice(-1) %>% # remove first now
                                         janitor::clean_names() %>% # clean column names
-                                        mutate(date_sample = excel_numeric_to_date(as.numeric(as.character(my_dates)), date_system = "modern")) %>%
                                         select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
+                                        mutate_at(vars(-matches(no_num)), ~ as.numeric(as.character(.))) %>% # char to num
                                         select_if(~ !(sum(is.na(.))/nrow(data))*100 > input$removeNA) %>% # remove na
-                                        mutate_if(is.numeric, function(x)ifelse(x == 0, input$replaceZeros, x)) %>% # replace zeros
+                                        mutate_if(is.numeric, function(x)ifelse(x == 0, input$replaceZeros, x)) # replace zeros
                                         
-                                        mutate_at(vars(contains("gender")), as.factor) %>% # modify var type
-                                        mutate_at(vars(contains("department")), as.factor) %>% # modify var type
-                                        mutate_at(vars(contains("area")), as.factor) %>% # modify var type
-                                        mutate_at(vars(contains("outcome")), as.factor) %>% # modify var type
-                                        
-                                        mutate_if(is.character, ~ as.numeric(as.character(.))) %>% # all char to num
-                                        
-                                        # mutate_at(vars(contains("date_sample")), dmy) %>% # modify var type
-                                        mutate_at(vars(contains("age")), as.character) %>% # modify var type
-                                        mutate_at(vars(contains("record")), as.character) %>% # modify var type
-                                        mutate_at(vars(contains("sample_nu")), as.character) %>% # modify var type
-                                        mutate_at(vars(contains("follow_up_days")), as.character) %>% # modify var type
-                                        mutate_at(vars(contains("follow_up_samples")), as.character) %>% # modify var type
-                                        mutate_at(vars(contains("tzc")), as.character) %>% # modify var type
-
-                                        rename_at(vars(contains("age")), ~ "age") %>% # modify var name
-
-                                        mutate_at(vars(matches(input$transformation_log)), log) %>% # log transformation
-                                        mutate_at(vars(matches(input$transformation_log2)), log2) %>% # log2 transformation
-                                        mutate_at(vars(matches(input$transformation_log10)), log10) %>% # log10 transformation
-                                        mutate_at(vars(matches(input$transformation_sqrt)), sqrt) %>% # sqrt transformation
-                                        rename_at(vars(matches(input$transformation_log)), ~ paste0(., "_log_trans")) %>% # modify log transformed var names
-                                        rename_at(vars(matches(input$transformation_log2)), ~ paste0(., "_log2_trans")) %>% # modify log2 transformed var names
-                                        rename_at(vars(matches(input$transformation_log10)), ~ paste0(., "_log10_trans")) %>% # modify log10 transformed var names
-                                        rename_at(vars(matches(input$transformation_sqrt)), ~ paste0(., "_sqrt_trans")) %>% # modify sqrt transformed var names
-
-                                        rename_if(is.numeric, ~ paste0(., "_proc")) %>% # modify all numeric var names
-                                        rename_if(is.Date, ~ "date") %>% # modify var name
+                                        if(input$trans_data){
+                                          data_subset <- data_subset %>%
+                                            mutate(date_sample = excel_numeric_to_date(as.numeric(as.character(date_sample)))) # format date
+                                        } 
                                       
-                                        mutate(age = as.numeric(age)) %>% # return age to numerical
-                                        mutate(complete_vars = apply(data, 1, function(x)sum(!is.na(x)))) %>% # create complete variables count
-                                        dplyr::group_by(record_num_hvh) %>% # create time points var
-                                        add_count(name = "time_points") %>% # create time points var
-                                        dplyr::ungroup() %>% # create time points var
-                                        select(complete_vars, time_points, everything()) # reorder columns
-                          
+                                        else{
+                                          data_subset <- data_subset %>%
+                                            mutate(date_sample = lubridate::as_date(date_sample)) # format date
+                                        }
+                                      
+                                        # else {
+                                        #   if(input$date_format == "ymd"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::ymd) # format date
+                                        #   }
+                                        #   else if(input$date_format == "dmy"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::dmy) # format date
+                                        #   }
+                                        #   else if(input$date_format == "mdy"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::mdy) # format date
+                                        #   }
+                                        # }
+                                        
+                                        data_subset <- data_subset %>%
+                                          mutate_at(vars(contains("record_nu")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("sample_nu")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("age")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("follow_up_days")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("follow_up_samples")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("tzc")), as.character) %>% # modify var type
+                                          mutate_at(vars(contains("gender")), as.factor) %>% # modify var type
+                                          mutate_at(vars(contains("department")), as.factor) %>% # modify var type
+                                          mutate_at(vars(contains("area")), as.factor) %>% # modify var type
+                                          mutate_at(vars(contains("outcome")), as.factor) %>% # modify var type
+                                          rename_at(vars(contains("age")), ~ "age") %>% # modify var name
+                                          rename_if(lubridate::is.Date, ~ "date") %>% # modify var name
+                                          
+                                          mutate_at(vars(matches(input$transformation_log)), log) %>% # log transformation
+                                          mutate_at(vars(matches(input$transformation_log2)), log2) %>% # log2 transformation
+                                          mutate_at(vars(matches(input$transformation_log10)), log10) %>% # log10 transformation
+                                          mutate_at(vars(matches(input$transformation_sqrt)), sqrt) %>% # sqrt transformation
+                                          rename_at(vars(matches(input$transformation_log)), ~ paste0(., "_log_trans")) %>% # modify log transformed var names
+                                          rename_at(vars(matches(input$transformation_log2)), ~ paste0(., "_log2_trans")) %>% # modify log2 transformed var names
+                                          rename_at(vars(matches(input$transformation_log10)), ~ paste0(., "_log10_trans")) %>% # modify log10 transformed var names
+                                          rename_at(vars(matches(input$transformation_sqrt)), ~ paste0(., "_sqrt_trans")) %>% # modify sqrt transformed var names
+                                          
+                                          rename_if(is.numeric, ~ paste0(., "_proc")) %>% # modify all numeric var names
+                                          mutate(age = as.numeric(age)) %>% # return age to numerical
+                                          mutate(complete_vars = apply(data_subset, 1, function(x)sum(!is.na(x)))) %>% # create complete variables count
+                                          dplyr::group_by(record_num_hvh) %>% # create time points var
+                                          add_count(name = "time_points") %>% # create time points var
+                                          dplyr::ungroup() %>% # create time points var
+                                          select(complete_vars, time_points, everything()) # reorder columns
+                                        
                                       
                                       if(input$summarize_points != 'all'){
                                         
@@ -121,7 +145,8 @@ processedInput <- eventReactive(input$process,
                                           data_subset <- data_subset %>% 
                                             arrange(date) %>%
                                             group_by(record_num_hvh) %>% 
-                                            slice(1L, n())
+                                            slice(1L, n()) %>%
+                                            ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                         
@@ -131,7 +156,8 @@ processedInput <- eventReactive(input$process,
                                           data_subset <- data_subset %>% 
                                             arrange(date) %>%
                                             group_by(record_num_hvh) %>% 
-                                            slice(1L)
+                                            slice(1L) %>%
+                                            ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                         
@@ -141,7 +167,8 @@ processedInput <- eventReactive(input$process,
                                           data_subset <- data_subset %>% 
                                             arrange(date) %>%
                                             group_by(record_num_hvh) %>% 
-                                            slice(n())
+                                            slice(n()) %>%
+                                            ungroup()
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                       }
