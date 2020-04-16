@@ -7,10 +7,11 @@ tabPanel("Upload Data",
                     
                     fileInput("dataset","Upload your data:", accept = c(".xlsx", ".csv")),
                     
-                    # radioButtons("readCSV", "Data format:", choices = c("csv (recomended)", "xlsx"), selected = "xlsx"),
-                    # 
-                    # conditionalPanel(condition = "input.readCSV == 'csv (recomended)'",
-                    #                  radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T)),
+                    radioButtons("readCSV", "Data format:", choices = c("xlsx (recomended)", "csv"), selected = "xlsx (recomended)"),
+                    
+                    conditionalPanel(condition = "input.readCSV == 'csv'",
+                                     radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T),
+                                     helpText("Decimal mark should be a dot")),
                     
                     checkboxInput("remove_first", "Remove first row", TRUE),
                     
@@ -27,12 +28,12 @@ tabPanel("Upload Data",
                                      
                                      checkboxInput("trans_data", "Format your date column (from xlsx to date)", TRUE),
                                      
-                                     # conditionalPanel(condition = "!input.trans_data",
-                                     #                  radioButtons("date_format", "Select your date column format:",
-                                     #                               choices = c("yyyy/mm/dd" = 'ymd',
-                                     #                                           "dd/mm/yyyy" = 'dmy',
-                                     #                                           "mm/dd/yyyy" = 'mdy'),
-                                     #                               selected = 'dmy')),
+                                     conditionalPanel(condition = "!input.trans_data",
+                                                      radioButtons("date_format", "Select your date column format:",
+                                                                   choices = c("yyyy/mm/dd" = 'ymd',
+                                                                               "dd/mm/yyyy" = 'dmy',
+                                                                               "mm/dd/yyyy" = 'mdy'),
+                                                                   selected = 'dmy')),
                                      
                                      sliderInput("removeNA", "Allowed % missing values in each column:", min = 0, max = 100, step = 1, value = 70),
                                      

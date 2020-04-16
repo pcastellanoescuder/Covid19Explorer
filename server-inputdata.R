@@ -1,33 +1,7 @@
 
 observe_helpers(help_dir = "help_mds")
 
-observe({
-  if(!is.null(datasetInput())){
-
-    if(isTRUE(input$remove_first)){
-      data <- datasetInput() %>% 
-        slice(-1) # remove first now
-    }else{
-      data <- datasetInput()
-    }
-    
-    my_data_names <- data %>%
-      select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
-      janitor::clean_names() %>% # clean column names
-      dplyr::select(-date_sample, -record_num_hvh, -sample_num, -age_years, -gender, -department, 
-             -area_of_care, -outcome, -follow_up_days, -follow_up_samples_total_n, -tzc_onset, -tzc_final)
-
-    x <- colnames(my_data_names)
-
-    updateSelectInput(session, "transformation_log", choices = c("None", x), selected = x)
-    updateSelectInput(session, "transformation_log2", choices = c("None", x), selected = "None")
-    updateSelectInput(session, "transformation_log10", choices = c("None", x), selected = "None")
-    updateSelectInput(session, "transformation_sqrt", choices = c("None", x), selected = "None")
-
-  }
-})
-
-####
+##
 
 datasetInput <- reactive({
   
@@ -37,20 +11,52 @@ datasetInput <- reactive({
     return(NULL)
     }
   else {
-    # if(input$readCSV == "csv (recomended)"){
-    #   if(input$separator == ";"){
-    #     data <- readr::read_csv2(infile$datapath, local = locale(encoding = "ISO-8859-1"))
-    #   } else {
-    #     data <- readr::read_csv(infile$datapath, local = locale(encoding = "ISO-8859-1"))
-    #   }
-    # } else {
+    if(input$readCSV == "csv"){
+      if(input$separator == ";"){
+        data <- readr::read_csv2(infile$datapath, local = locale(encoding = "ISO-8859-1", decimal_mark = ","))
+      } else {
+        data <- readr::read_csv(infile$datapath, local = locale(encoding = "ISO-8859-1", decimal_mark = ","))
+      }
+    } else {
       data <- readxl::read_xlsx(infile$datapath)
-    # }
+    }
     return(data)
     }
 })
 
 ####
+
+observe({
+  
+  if(!is.null(datasetInput())){
+
+  if(isTRUE(input$remove_first)){
+    data <- datasetInput() %>%
+      slice(-1) # remove first now
+  }else{
+    data <- datasetInput()
+  }
+  
+  my_data_names <- data %>%
+    select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
+    janitor::clean_names()# clean column names
+  
+  x <- colnames(my_data_names)
+  
+  remove <- c("date_sample", "record_num_hvh", "sample_num", "age_years", "gender", "department", "area_of_care", "outcome", 
+              "follow_up_days", "follow_up_samples_total_n", "tzc_onset", "tzc_final")
+  x <- x[!(x %in% remove)]
+  
+  updateSelectInput(session, "transformation_log", choices = c("None", x), selected = x)
+  updateSelectInput(session, "transformation_log2", choices = c("None", x), selected = "None")
+  updateSelectInput(session, "transformation_log10", choices = c("None", x), selected = "None")
+  updateSelectInput(session, "transformation_sqrt", choices = c("None", x), selected = "None")
+  
+  }
+  
+})
+
+##
 
 processedInput <- eventReactive(input$process,
                                 ignoreNULL = TRUE, {
@@ -72,7 +78,7 @@ processedInput <- eventReactive(input$process,
                                       if(isTRUE(input$remove_first)){
                                         data <- datasetInput() %>% 
                                           slice(-1) # remove first now
-                                      }else{
+                                      } else {
                                         data <- datasetInput()
                                       }
                                       
@@ -93,24 +99,25 @@ processedInput <- eventReactive(input$process,
                                             mutate(date_sample = janitor::excel_numeric_to_date(as.numeric(as.character(date_sample)))) # format date
                                         } 
                                       
-                                        else {
-                                          data_subset <- data_subset %>%
-                                            mutate(date_sample = lubridate::as_date(date_sample)) # format date
-                                        }
                                         # else {
-                                        #   if(input$date_format == "ymd"){
-                                        #     data_subset <- data_subset %>%
-                                        #       mutate_at(vars(contains("date_sam")), lubridate::ymd) # format date
-                                        #   }
-                                        #   else if(input$date_format == "dmy"){
-                                        #     data_subset <- data_subset %>%
-                                        #       mutate_at(vars(contains("date_sam")), lubridate::dmy) # format date
-                                        #   }
-                                        #   else if(input$date_format == "mdy"){
-                                        #     data_subset <- data_subset %>%
-                                        #       mutate_at(vars(contains("date_sam")), lubridate::mdy) # format date
-                                        #   }
+                                        #   data_subset <- data_subset %>%
+                                        #     mutate(date_sample = lubridate::as_date(date_sample)) # format date
                                         # }
+                                      
+                                        else {
+                                          if(input$date_format == "ymd"){
+                                            data_subset <- data_subset %>%
+                                              mutate_at(vars(contains("date_sam")), lubridate::ymd) # format date
+                                          }
+                                          else if(input$date_format == "dmy"){
+                                            data_subset <- data_subset %>%
+                                              mutate_at(vars(contains("date_sam")), lubridate::dmy) # format date
+                                          }
+                                          else if(input$date_format == "mdy"){
+                                            data_subset <- data_subset %>%
+                                              mutate_at(vars(contains("date_sam")), lubridate::mdy) # format date
+                                          }
+                                        }
                                         
                                         data_subset <- data_subset %>%
                                           mutate_at(vars(contains("record_nu")), as.character) %>% # modify var type
