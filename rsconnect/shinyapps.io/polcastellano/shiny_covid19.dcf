@@ -5,8 +5,8 @@ account: polcastellano
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2128387
-bundleId: 3022090
+bundleId: 3023364
 url: https://polcastellano.shinyapps.io/shiny_covid19/
-when: 1587044404.74658
+when: 1587061857.62187
 asMultiple: FALSE
 asStatic: FALSE
