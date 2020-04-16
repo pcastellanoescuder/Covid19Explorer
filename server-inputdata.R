@@ -39,9 +39,9 @@ datasetInput <- reactive({
   else {
     if(input$readCSV == "csv (recomended)"){
       if(input$separator == ";"){
-        data <- readr::read_csv2(infile$datapath, local = locale(encoding = "latin1"))
+        data <- readr::read_csv2(infile$datapath, local = locale(encoding = "ISO-8859-1"))
       } else {
-        data <- readr::read_csv(infile$datapath, local = locale(encoding = "latin1"))
+        data <- readr::read_csv(infile$datapath, local = locale(encoding = "ISO-8859-1"))
       }
     } else {
       data <- readxl::read_excel(infile$datapath)

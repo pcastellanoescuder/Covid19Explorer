@@ -10,7 +10,7 @@ tabPanel("Upload Data",
                     radioButtons("readCSV", "Data format:", choices = c("csv (recomended)", "xlsx"), selected = "xlsx"),
                     
                     conditionalPanel(condition = "input.readCSV == 'csv (recomended)'",
-                                     radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ",", inline = T)),
+                                     radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T)),
                     
                     checkboxInput("remove_first", "Remove first row", TRUE),
                     
