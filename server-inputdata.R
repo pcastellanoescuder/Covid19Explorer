@@ -37,15 +37,15 @@ datasetInput <- reactive({
     return(NULL)
     }
   else {
-    if(input$readCSV == "csv (recomended)"){
-      if(input$separator == ";"){
-        data <- readr::read_csv2(infile$datapath, local = locale(encoding = "ISO-8859-1"))
-      } else {
-        data <- readr::read_csv(infile$datapath, local = locale(encoding = "ISO-8859-1"))
-      }
-    } else {
-      data <- readxl::read_excel(infile$datapath)
-    }
+    # if(input$readCSV == "csv (recomended)"){
+    #   if(input$separator == ";"){
+    #     data <- readr::read_csv2(infile$datapath, local = locale(encoding = "ISO-8859-1"))
+    #   } else {
+    #     data <- readr::read_csv(infile$datapath, local = locale(encoding = "ISO-8859-1"))
+    #   }
+    # } else {
+      data <- readxl::read_xlsx(infile$datapath)
+    # }
     return(data)
     }
 })
@@ -94,19 +94,23 @@ processedInput <- eventReactive(input$process,
                                         } 
                                       
                                         else {
-                                          if(input$date_format == "ymd"){
-                                            data_subset <- data_subset %>%
-                                              mutate_at(vars(contains("date_sam")), lubridate::ymd) # format date
-                                          }
-                                          else if(input$date_format == "dmy"){
-                                            data_subset <- data_subset %>%
-                                              mutate_at(vars(contains("date_sam")), lubridate::dmy) # format date
-                                          }
-                                          else if(input$date_format == "mdy"){
-                                            data_subset <- data_subset %>%
-                                              mutate_at(vars(contains("date_sam")), lubridate::mdy) # format date
-                                          }
+                                          data_subset <- data_subset %>%
+                                            mutate(date_sample = lubridate::as_date(date_sample)) # format date
                                         }
+                                        # else {
+                                        #   if(input$date_format == "ymd"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::ymd) # format date
+                                        #   }
+                                        #   else if(input$date_format == "dmy"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::dmy) # format date
+                                        #   }
+                                        #   else if(input$date_format == "mdy"){
+                                        #     data_subset <- data_subset %>%
+                                        #       mutate_at(vars(contains("date_sam")), lubridate::mdy) # format date
+                                        #   }
+                                        # }
                                         
                                         data_subset <- data_subset %>%
                                           mutate_at(vars(contains("record_nu")), as.character) %>% # modify var type
