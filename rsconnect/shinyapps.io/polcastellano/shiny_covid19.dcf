@@ -1,0 +1,12 @@
+name: shiny_covid19
+title: shiny_covid19
+username:
+account: polcastellano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2128387
+bundleId: 3022090
+url: https://polcastellano.shinyapps.io/shiny_covid19/
+when: 1587044404.74658
+asMultiple: FALSE
+asStatic: FALSE
