@@ -2,8 +2,8 @@
 shinyServer(function(input, output, session) {
 
 # Logged <- FALSE
-# my_username <- "PujolBorrell"
-# my_password <- "Covid19shinyVH2020"
+# my_username <- "XXXX"
+# my_password <- "XXXX"
 # 
 # values <- reactiveValues(authenticated = FALSE)
 # 
@@ -51,11 +51,13 @@ shinyServer(function(input, output, session) {
 # })
 
 source("server-inputdata.R",local = TRUE)
-source("server-density.R",local = TRUE)
+source("server-density_raw.R",local = TRUE)
+source("server-density_proc.R",local = TRUE)
 source("server-timeplots.R",local = TRUE)
 source("server-scatter.R",local = TRUE)
 source("server-correlogram.R",local = TRUE)
 source("server-network.R",local = TRUE)
+# source("server-pca.R",local = TRUE)
 
 })
 

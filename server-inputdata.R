@@ -33,13 +33,13 @@ observe({
   if(isTRUE(input$remove_first)){
     data <- datasetInput() %>%
       slice(-1) # remove first now
-  }else{
+  } else {
     data <- datasetInput()
   }
   
   my_data_names <- data %>%
     select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
-    janitor::clean_names()# clean column names
+    janitor::clean_names() # clean column names
   
   x <- colnames(my_data_names)
   
@@ -143,7 +143,7 @@ processedInput <- eventReactive(input$process,
                                           rename_at(vars(matches(input$transformation_sqrt)), ~ paste0(., "_sqrt_trans")) %>% # modify sqrt transformed var names
                                           
                                           rename_if(is.numeric, ~ paste0(., "_proc")) %>% # modify all numeric var names
-                                          mutate(age = as.numeric(age)) %>% # return age to numerical
+                                          mutate_at(vars(contains("age")), as.numeric) %>% # return age to numerical
                                           mutate(complete_vars = apply(data_subset, 1, function(x)sum(!is.na(x)))) %>% # create complete variables count
                                           dplyr::group_by(record_num_hvh) %>% # create time points var
                                           add_count(name = "time_points") %>% # create time points var
@@ -160,7 +160,8 @@ processedInput <- eventReactive(input$process,
                                             dplyr::arrange(date) %>%
                                             dplyr::group_by(record_num_hvh) %>% 
                                             dplyr::slice(1L, n()) %>%
-                                            dplyr::ungroup()
+                                            dplyr::ungroup() %>%
+                                            dplyr::filter(time_points > 1)
                                           data_subset <-  data_subset[!duplicated(data_subset) ,]
                                         }
                                         

@@ -3,21 +3,15 @@ observe({
   if(!is.null(processedInput())){
     
     data_subset <- processedInput() %>%
-      select(-complete_vars, -time_points, -age)
-    
-    if(!is.null(input$contents_proc_rows_selected)){
-      data_subset <- data_subset[input$contents_proc_rows_selected ,]
-    } 
-    else{
-      data_subset <- data_subset
-    }
+      select_at(vars(ends_with("_proc")))
     
     x <- colnames(data_subset)
-    
-    idx <- map(data_subset, is.numeric) %>% unlist()
-    updateSelectInput(session, "features", choices = x[idx], selected = x[grepl("il6", x)])
+
+    updateSelectInput(session, "features", choices = x, selected = x[grepl("il6", x)])
   }
 })
+
+##
 
 output$timeplots <- renderPlotly({
   
@@ -33,14 +27,11 @@ output$timeplots <- renderPlotly({
   else{
   
     data_subset <- processedInput() %>%
-      select(-complete_vars, -time_points)
+      dplyr::select(-complete_vars, -time_points)
     
     if(!is.null(input$contents_proc_rows_selected)){
       data_subset <- data_subset[input$contents_proc_rows_selected ,]
     } 
-    else{
-      data_subset <- data_subset
-    }
   
   data_subset <- data_subset %>%
     pivot_longer(cols = ends_with("_proc")) %>% 
@@ -58,7 +49,8 @@ output$timeplots <- renderPlotly({
     {if(input$wrap_into == "gender")facet_wrap(vars(gender))} +
     {if(input$wrap_into == "department")facet_wrap(vars(department))} +
     {if(input$wrap_into == "subject")facet_wrap(vars(record_num_hvh))} +
-    labs(color = "", shape = "")
+    labs(color = "", shape = "") 
+    # scale_x_continuous(labels = function(x)format(as.Date(as.character(x), "%j"), "%d-%b"))
   
   plotly::ggplotly(my_time_plot)
   

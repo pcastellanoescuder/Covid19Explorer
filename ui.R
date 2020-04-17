@@ -12,16 +12,16 @@ dashboardPage(
   
     dashboardSidebar(sidebarMenu(
       menuItem("Input Data", tabName = "inputdata", icon = icon("upload")),
-      menuItem("Descriptive Plots", tabName = "density", icon = icon("search")),
-      menuItem("Plots by Time", tabName = "timeplots", icon = icon("chart-line")),
+      menuItem("Descriptive Analysis", tabName = "density", icon = icon("search"), startExpanded = FALSE,
+               menuSubItem("Raw Data", tabName = "density_raw"),
+               menuSubItem("Processed Data", tabName = "density_proc")),
+      menuItem("Time Plots", tabName = "timeplots", icon = icon("chart-line")),
       menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"), startExpanded = FALSE,
                menuSubItem("Scatterplot", tabName = "scatter"),
                menuSubItem("Global Correlation Plot", tabName = "correlogram"),
                menuSubItem("Network Visualization", tabName = "network")),
-      
       # menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
-      # menuItem("Clustering", tabName = "cluster", icon = icon("object-group")),
-      # menuItem("Gaussian Graphical Model", tabName = "ggm", icon = icon("project-diagram")),
+      # menuItem("XXXX", tabName = "XXXX", icon = icon("XXXX")),
       menuItem("Help", tabName = "help", icon = icon("question"))
       
     )),
@@ -34,8 +34,10 @@ dashboardPage(
       tabItems(
         tabItem(tabName = "inputdata",
                 source("ui-tab-inputdata.R",local=TRUE)$value),
-        tabItem(tabName = "density",
-                source("ui-tab-density.R",local=TRUE)$value),
+        tabItem(tabName = "density_raw",
+                source("ui-tab-density_raw.R",local=TRUE)$value),
+        tabItem(tabName = "density_proc",
+                source("ui-tab-density_proc.R",local=TRUE)$value),
         tabItem(tabName = "timeplots",
                 source("ui-tab-timeplots.R",local=TRUE)$value),
         tabItem(tabName = "scatter",
@@ -43,7 +45,9 @@ dashboardPage(
         tabItem(tabName = "correlogram",
                 source("ui-tab-correlogram.R",local=TRUE)$value),
         tabItem(tabName = "network",
-                source("ui-tab-network.R",local=TRUE)$value)
+                source("ui-tab-network.R",local=TRUE)$value) # ,
+        # tabItem(tabName = "pca",
+        #         source("ui-tab-pca.R",local=TRUE)$value)
       ),
       
       tags$hr(),

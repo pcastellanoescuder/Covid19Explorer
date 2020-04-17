@@ -3,26 +3,23 @@ observe({
   if(!is.null(processedInput())){
     
     data_subset <- processedInput() %>%
-      select(-complete_vars, -time_points)
+      dplyr::select(-complete_vars, -time_points) %>%
+      select_if(is.numeric)
     
-    if(!is.null(input$contents_proc_rows_selected)){
-      data_subset <- data_subset[input$contents_proc_rows_selected ,]
-    } 
-    else{
-      data_subset <- data_subset
-    }
+    data_factor <- processedInput() %>%
+      select_if(is.factor)
     
     x <- colnames(data_subset)
+    y <- colnames(data_factor)
+ 
+    updateSelectInput(session, "one", choices = x, selected = x[grepl("il6", x)])
+    updateSelectInput(session, "two", choices = x, selected = x[grepl("reactive_prote", x)])
     
-    idx <- map(data_subset, is.numeric) %>% unlist()
-    idx2 <- map(data_subset, is.factor) %>% unlist()
-    
-    updateSelectInput(session, "one", choices = x[idx], selected = x[grepl("il6", x)])
-    updateSelectInput(session, "two", choices = x[idx], selected = x[grepl("reactive_prote", x)])
-    
-    updateSelectInput(session, "my_factor", choices = c("None", x[idx2]), selected = "None")
+    updateSelectInput(session, "my_factor", choices = c("None", y), selected = "None")
   }
 })
+
+##
 
 Createdata <- reactive({
   
@@ -32,7 +29,7 @@ Createdata <- reactive({
   else{
     
     data_subset <- processedInput() %>%
-      select(-complete_vars, -time_points)
+      dplyr::select(-complete_vars, -time_points)
     
     if(!is.null(input$contents_proc_rows_selected)){
       data_subset <- data_subset[input$contents_proc_rows_selected ,]
@@ -60,6 +57,8 @@ Createdata <- reactive({
     
   }
 })
+
+##
 
 output$cor_plot <- renderPlot({
   
