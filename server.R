@@ -57,7 +57,7 @@ source("server-timeplots.R",local = TRUE)
 source("server-scatter.R",local = TRUE)
 source("server-correlogram.R",local = TRUE)
 source("server-network.R",local = TRUE)
-# source("server-pca.R",local = TRUE)
+source("server-pca.R",local = TRUE)
 
 })
 

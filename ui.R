@@ -20,7 +20,7 @@ dashboardPage(
                menuSubItem("Scatterplot", tabName = "scatter"),
                menuSubItem("Global Correlation Plot", tabName = "correlogram"),
                menuSubItem("Network Visualization", tabName = "network")),
-      # menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
+      menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
       # menuItem("XXXX", tabName = "XXXX", icon = icon("XXXX")),
       menuItem("Help", tabName = "help", icon = icon("question"))
       
@@ -45,9 +45,9 @@ dashboardPage(
         tabItem(tabName = "correlogram",
                 source("ui-tab-correlogram.R",local=TRUE)$value),
         tabItem(tabName = "network",
-                source("ui-tab-network.R",local=TRUE)$value) # ,
-        # tabItem(tabName = "pca",
-        #         source("ui-tab-pca.R",local=TRUE)$value)
+                source("ui-tab-network.R",local=TRUE)$value),
+        tabItem(tabName = "pca",
+                source("ui-tab-pca.R",local=TRUE)$value)
       ),
       
       tags$hr(),

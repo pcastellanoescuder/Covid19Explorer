@@ -17,6 +17,6 @@ library(shinyWidgets)
 library(shinyhelper)
 library(patchwork)
 library(readr)
-
-library(mixOmics)
 library(skimr)
+library(FactoMineR)
+library(factoextra)
