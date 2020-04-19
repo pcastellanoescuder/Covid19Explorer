@@ -68,9 +68,15 @@ data_subset1 <- data_subset %>%
 data_factor <- data_subset %>%
   select_at(vars(matches(total_fac)))
 
-data_subset <- bind_cols(data_factor, data_subset1)
+data_names <- data_subset %>%
+  select_at(vars(contains("record")))
+
+data_subset <- bind_cols(data_factor, data_subset1) # , data_names)
+
 
 data_subset <- data_subset[1:50,]
+
+data_names <- data_names[1:50,]
 
 #### OK
 
@@ -90,7 +96,9 @@ res_pca <- PCA(data_subset,
                quali.sup = idx_fac_total, 
                graph = F)
 
-fviz_pca_biplot(res_pca, repel = FALSE, title = "", label = F) + theme_bw() + geom_point(aes(label = data_subset$hemoglobin_proc))
+data_names <- bind_cols(data_names, as.data.frame(res_pca$ind$coord))
+
+fviz_pca_biplot(res_pca, repel = FALSE, title = "", label = "var", axes = c(1,2), palette = "rickandmorty", col.var = "red") + theme_bw()
 
 
 

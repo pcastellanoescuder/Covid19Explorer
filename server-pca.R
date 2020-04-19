@@ -52,7 +52,7 @@ output$pcaplot <- renderPlot({
     data_names <- processedInput() %>%
       select_at(vars(contains("record_num")))
       
-    data_subset <- bind_cols(data_factor, data_subset) # , data_names)
+    data_subset <- bind_cols(data_factor, data_subset, data_names)
     
     if(!is.null(input$contents_proc_rows_selected)){
       data_subset <- data_subset[input$contents_proc_rows_selected ,]
@@ -60,7 +60,11 @@ output$pcaplot <- renderPlot({
     
     ##
     
-    idx_names <- c(which(grepl("record_num", colnames(data_subset))))
+    data_names <- data_subset %>%
+      select_at(vars(contains("record_num")))
+    
+    data_subset <- data_subset %>%
+      select_at(vars(-contains("record_num")))
     
     ##
     
@@ -76,14 +80,25 @@ output$pcaplot <- renderPlot({
     
     res_pca <- PCA(data_subset, ind.sup = NULL, quanti.sup = idx_var2, quali.sup = idx_fac_total, graph = F) 
 
+    data_names <- bind_cols(data_names, as.data.frame(res_pca$ind$coord))
+    
     if(input$dims_pca == "1 and 2"){
       dims <- c(1,2)
+      
+      data_names <- data_names %>% select(1,2,3)
+      colnames(data_names) <- c("ID", "X", "Y")
     }
-    if(input$dims_pca == "2 and 3"){
+    else if(input$dims_pca == "2 and 3"){
       dims <- c(2,3)
+
+      data_names <- data_names %>% select(1,3,4)
+      colnames(data_names) <- c("ID", "X", "Y")
     }
-    if(input$dims_pca == "1 and 3"){
+    else if(input$dims_pca == "1 and 3"){
       dims <- c(1,3)
+
+      data_names <- data_names %>% select(1,2,4)
+      colnames(data_names) <- c("ID", "X", "Y")
     }
     
     ##
@@ -95,9 +110,14 @@ output$pcaplot <- renderPlot({
                       repel = FALSE, 
                       title = "", 
                       addEllipses = input$ellipse_pca,
-                      label = "var") +
+                      label = "var",
+                      col.var = "red",
+                      # palette = input$pca_palette,
+                      alpha.ind = 0.8) +
         theme_bw() +
-        theme(legend.position = "top")
+        {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+        theme(legend.position = "top") 
+
     } 
     else{
       
@@ -107,9 +127,13 @@ output$pcaplot <- renderPlot({
                       title = "", 
                       habillage = idx_fac_total, 
                       addEllipses = input$ellipse_pca,
-                      label = "var") +
+                      label = "var",
+                      col.var = "red",
+                      # palette = input$pca_palette,
+                      alpha.ind = 0.8) +
         theme_bw() +
-        theme(legend.position = "top")
+        {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+        theme(legend.position = "top") 
     }
     
   } 
