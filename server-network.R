@@ -13,7 +13,11 @@ output$network_plot <- renderPlot({
   
   cor_matrix2 <- round(cor(data_numeric, use = "pairwise.complete.obs"), 3)
   
-  qgraph(cor_matrix2, graph = input$corr_type, layout = input$layout, threshold = input$threshold, 
+  qgraph(cor_matrix2, 
+         graph = input$corr_type, 
+         layout = input$layout, 
+         threshold = input$threshold, 
+         labels = substr(rownames(cor_matrix2), start = 1, stop = 5),
          edge.labels = input$network_labels)
     
 })

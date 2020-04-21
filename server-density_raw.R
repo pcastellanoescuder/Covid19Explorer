@@ -71,8 +71,9 @@ DESFUN <- reactive({
       filter(variable != "record_num_hvh") %>%
       filter(variable != "sample_num") %>%
       mutate_if(is.numeric, round, 3) %>%
-      dplyr::select(-c(character.min:factor.top_counts)) %>%
-      dplyr::rename(mean = numeric.mean, sd = numeric.sd, min = numeric.p0, p25 = numeric.p25, median = numeric.p50, p75 = numeric.p75,
+      dplyr::select(-c(character.min:factor.n_unique)) %>%
+      dplyr::rename(Freq = factor.top_counts, mean = numeric.mean, sd = numeric.sd, min = numeric.p0, 
+                    p25 = numeric.p25, median = numeric.p50, p75 = numeric.p75,
                     max = numeric.p100, histogram = numeric.hist)
     
     my_table_num <- my_table_num %>%
