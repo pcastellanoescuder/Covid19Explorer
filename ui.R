@@ -57,7 +57,9 @@ dashboardPage(
       tags$footer(p(strong("Pol Castellano Escuder, Paco Carmona Pontaque and Alex Sánchez Pla"), align="center", width=3),
                   p("Statistics and Bioinformatics Research Group", align="center", width=3),
                   p(("University of Barcelona"), align="center", width=3),
-                  p(("Copyright (C) 2020, app licensed under GPLv3"), align="center", width=4), align="center", width=4),
+                  p(("Copyright (C) 2020, app licensed under GPLv3"), align="center", width=4), align="center", width=4,
+                  p(("Code available on Github:"),a("https://github.com/pcastellanoescuder/shiny_covid19",
+                                                    href="https://github.com/pcastellanoescuder/shiny_covid19"))),
       
       ## GOOGLE ANALYTICS
       
