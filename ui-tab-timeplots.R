@@ -4,12 +4,7 @@ fluidRow(
            
            selectizeInput("features", label = "Select your features:", choices = NULL, multiple = TRUE),
            
-           radioButtons("wrap_into", "Split by:",
-                        c("No split" = "none",
-                          "Gender" = "gender",
-                          "Subject" = "subject",
-                          "Department" = "department"),
-                        selected = "subject"),
+           checkboxInput("wrap_into", "Split by ID", TRUE),
            
            checkboxInput("plot_lines", "Show lines", TRUE)
   
@@ -17,7 +12,7 @@ fluidRow(
   
   column(width = 9,
          
-         plotlyOutput("timeplots", height = "500px")
+         plotOutput("timeplots", height = "500px")
          
          )
   )

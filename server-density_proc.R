@@ -27,9 +27,8 @@ DESFUN_PROC <- reactive({
     skim() %>%
     dplyr::rename(type = skim_type, variable = skim_variable, percent_complete = complete_rate) %>%
     mutate(percent_complete = percent_complete*100) %>%
-    filter(variable != "date_sample") %>%
-    filter(variable != "record_num_hvh") %>%
-    filter(variable != "sample_num") %>%
+    filter(variable != "id") %>%
+    filter(variable != "date") %>%
     mutate_if(is.numeric, round, 3) %>%
     dplyr::select(-c(character.min:factor.n_unique)) %>%
     dplyr::rename(Freq = factor.top_counts, mean = numeric.mean, sd = numeric.sd, min = numeric.p0, 

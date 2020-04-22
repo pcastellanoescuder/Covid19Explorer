@@ -13,11 +13,11 @@ observe({
     ##
     
     data_variables <- processedInput() %>%
-      select_at(vars(ends_with("_proc")))
+      select(starts_with("tn_"), starts_with("n_"))
     
     y <- colnames(data_variables)
     
-    updateSelectInput(session, "my_variables_pca", choices = y, selected = y[1:3])
+    updateSelectInput(session, "my_variables_pca", choices = y, selected = y[1:2])
     updateSelectInput(session, "my_variables_pca2", choices = c(y, "None"), selected = "None")
     
   }
@@ -50,7 +50,7 @@ output$pcaplot <- renderPlot({
       select_at(vars(matches(total_fac)))
     
     data_names <- processedInput() %>%
-      select_at(vars(contains("record_num")))
+      select_at(vars(matches("id")))
       
     data_subset <- bind_cols(data_factor, data_subset, data_names)
     
@@ -61,10 +61,10 @@ output$pcaplot <- renderPlot({
     ##
     
     data_names <- data_subset %>%
-      select_at(vars(contains("record_num")))
+      select_at(vars(matches("id")))
     
     data_subset <- data_subset %>%
-      select_at(vars(-contains("record_num")))
+      select_at(vars(-matches("id")))
     
     ##
     

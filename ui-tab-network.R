@@ -5,12 +5,17 @@ fluidRow(
                   
                   radioButtons("corr_type", label = "Select type of network:", 
                                choices = c("Correlation network" = 'cor', 
-                                           "Partial correlation network" = 'pcor')),
+                                           "Partial correlation network" = 'pcor',
+                                           "Gaussian graphical model" = 'glasso')),
                   
+                  conditionalPanel(condition = "input.corr_type == 'glasso'",
+                                   sliderInput("regularization", "Regularization parameter:", min = 0.1, max = 1, value = 0.5)),
+                  
+                  conditionalPanel(condition = "input.corr_type != 'glasso'",
+                                   sliderInput("threshold", "Threshold:",  value = 0.4, min = 0, max = 1, step = 0.1)),
+
                   selectInput("layout", label = "Select layout:", choices = c("spring", "circle")),
                   
-                  sliderInput("threshold", "Threshold:",  value = 0.4, min = 0, max = 1, step = 0.1),
-
                   checkboxInput("network_labels", "Show labels", FALSE)
   )),
   

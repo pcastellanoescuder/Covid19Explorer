@@ -1,7 +1,7 @@
 library(qgraph)
 library(tidyverse)
 
-data <- readxl::read_excel("../2020-04-COVID19-HUVH/FINAL_DATA/Export for UEB VHIR 14_04_2020_field equiv_f1.xlsx")
+data <- readxl::read_excel("../2020-04-COVID19-HUVH/FINAL_DATA/new_Export for UEB VHIR 14_04_2020_field equiv_f1.xlsx")
 
 no_num <- c("date_sample", "record_num_hvh", "sample_num", 
             "age_years", "gender", "department", 
@@ -34,15 +34,15 @@ data_subset <- data %>%
 
 ####
 
-data_numeric <- data_subset %>%
-  select_if(is.numeric)
+data_subset <- data %>%
+  slice(-1) %>%
+  janitor::clean_names() %>% # clean column names
+  select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
+  mutate_at(vars(tidyr::starts_with("tn_")), ~ as.numeric(as.character(.))) %>%
+  mutate_at(vars(tidyr::starts_with("n_")), ~ as.numeric(as.character(.))) %>%
+  mutate_at(vars(tidyr::starts_with("f_")), ~ as.factor(as.character(.))) %>%
+  mutate_at(vars(tidyr::starts_with("c_")), as.character) %>%
+  select_if(~ !(sum(is.na(.))/nrow(data))*100 > 100) %>% 
+  mutate_at(vars(tidyr::starts_with("tn_")), function(x)ifelse(x == 0, 1363465436, x))
 
-cor_matrix2 <- round(cor(data_numeric, use = "pairwise.complete.obs"), 3)
-
-qgraph(cor_matrix2, graph = "cor", threshold = 0.4, labels = substr(rownames(cor_matrix2), start = 1, stop = 5), 
-       legend = T, legend.mode = "names")
-
-
-
-
-
+       

@@ -12,8 +12,8 @@ observe({
     x <- colnames(data_subset)
     y <- colnames(data_factor)
  
-    updateSelectInput(session, "one", choices = x, selected = x[grepl("il6", x)])
-    updateSelectInput(session, "two", choices = x, selected = x[grepl("reactive_prote", x)])
+    updateSelectInput(session, "one", choices = x, selected = x[1])
+    updateSelectInput(session, "two", choices = x, selected = x[2])
     
     updateSelectInput(session, "my_factor", choices = c("None", y), selected = "None")
   }
@@ -35,7 +35,7 @@ Createdata <- reactive({
       data_subset <- data_subset[input$contents_proc_rows_selected ,]
     } 
     
-    code <- as.data.frame(data_subset[, colnames(data_subset) == "record_num_hvh"])
+    code <- as.data.frame(data_subset[, colnames(data_subset) == "id"])
     data_subset1 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$one)])
     data_subset2 <- as.data.frame(data_subset[, colnames(data_subset) == as.character(input$two)])
     

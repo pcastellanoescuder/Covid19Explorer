@@ -9,14 +9,10 @@ observe({
       data_subset <- datasetInput()
     }
 
-    no_num <- c("date_sample", "record_num_hvh", "sample_num", "gender", "department",
-                "area_of_care", "outcome", "follow_up_days",
-                "follow_up_samples_total_n", "tzc_onset", "tzc_final")
-
     data_subset <- data_subset %>%
       janitor::clean_names() %>% # clean column names
       select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
-      select_at(vars(-matches(no_num)))
+      select(starts_with("tn_"), starts_with("n_"))
 
     x <- colnames(data_subset)
 
@@ -38,38 +34,23 @@ DESFUN <- reactive({
       data_subset <- datasetInput()
     }
     
-    # if(!is.null(input$contents_rows_selected)){
-    #   data_subset <- data_subset[input$contents_rows_selected ,]
-    #   }
-    
-    no_num <- c("date_sample", "record_num_hvh", "sample_num", 
-                "age_years", "gender", "department", 
-                "area_of_care", "outcome", "follow_up_days", 
-                "follow_up_samples_total_n", "tzc_onset", "tzc_final")
-    
     my_table_num <- data_subset %>%
       janitor::clean_names() %>% # clean column names
       select_if(~ sum(!is.na(.)) > 0) %>% # drop columns that only have NAs
-      mutate_at(vars(-matches(no_num)), ~ as.numeric(as.character(.))) %>% # char to num
-      mutate_at(vars(contains("date_sam")), as.character) %>%
-      mutate_at(vars(contains("age")), as.numeric) %>%
-      mutate_at(vars(contains("record_nu")), as.character) %>% # modify var type
-      mutate_at(vars(contains("sample_nu")), as.character) %>% # modify var type
-      mutate_at(vars(contains("follow_up_days")), as.character) %>% # modify var type
-      mutate_at(vars(contains("follow_up_samples")), as.character) %>% # modify var type
-      mutate_at(vars(contains("tzc")), as.character) %>% # modify var type
-      mutate_at(vars(contains("gender")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("department")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("area")), as.factor) %>% # modify var type
-      mutate_at(vars(contains("outcome")), as.factor)
+      mutate_at(vars(tidyr::starts_with("tn_")), ~ as.numeric(as.character(.))) %>%
+      mutate_at(vars(tidyr::starts_with("n_")), ~ as.numeric(as.character(.))) %>%
+      mutate_at(vars(tidyr::starts_with("f_")), ~ as.factor(as.character(.))) %>%
+      mutate_at(vars(tidyr::starts_with("c_")), as.character) %>%
+      mutate_at(vars(tidyr::starts_with("id_")), as.character) %>%
+      rename_at(vars(contains("date")), ~ "date") %>% # modify var name
+      rename_at(vars(tidyr::starts_with("id_")), ~ "id")
     
     my_table <- my_table_num %>%
       skim() %>%
       dplyr::rename(type = skim_type, variable = skim_variable, percent_complete = complete_rate) %>%
       mutate(percent_complete = percent_complete*100) %>%
-      filter(variable != "date_sample") %>%
-      filter(variable != "record_num_hvh") %>%
-      filter(variable != "sample_num") %>%
+      filter(variable != "id") %>%
+      filter(variable != "date") %>%
       mutate_if(is.numeric, round, 3) %>%
       dplyr::select(-c(character.min:factor.n_unique)) %>%
       dplyr::rename(Freq = factor.top_counts, mean = numeric.mean, sd = numeric.sd, min = numeric.p0, 
