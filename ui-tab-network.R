@@ -16,7 +16,9 @@ fluidRow(
 
                   selectInput("layout", label = "Select layout:", choices = c("spring", "circle")),
                   
-                  checkboxInput("network_labels", "Show labels", FALSE)
+                  numericInput("number_char_nod", label = "Select the number of characters to display in each node:", value = 5),
+                  
+                  checkboxInput("network_labels", "Show edge labels", FALSE)
   )),
   
   column(width = 8,

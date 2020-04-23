@@ -121,11 +121,10 @@ processedInput <- eventReactive(input$process,
                                           rename_at(vars(matches(input$transformation_log2)), ~ paste0(., "_log2")) %>% # modify log2 transformed var names
                                           rename_at(vars(matches(input$transformation_log10)), ~ paste0(., "_log10")) %>% # modify log10 transformed var names
                                           rename_at(vars(matches(input$transformation_sqrt)), ~ paste0(., "_sqrt")) %>% # modify sqrt transformed var names
-                                          mutate(complete_vars = apply(data_subset, 1, function(x)sum(!is.na(x)))) %>% # create complete variables count
                                           dplyr::group_by(id) %>% # create time points var
                                           add_count(name = "time_points") %>% # create time points var
                                           dplyr::ungroup() %>% # create time points var
-                                          dplyr::select(complete_vars, time_points, everything()) # reorder columns
+                                          dplyr::select(id, date, time_points, everything()) # reorder columns
                                         
                                       
                                       if(input$summarize_points != 'all'){

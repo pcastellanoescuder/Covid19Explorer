@@ -13,7 +13,7 @@ tabPanel("Upload Data",
                                      radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T),
                                      helpText("Decimal mark should be a dot")),
                     
-                    checkboxInput("remove_first", "Remove first row", TRUE),
+                    checkboxInput("remove_first", "Remove first row", FALSE),
                     
                     radioButtons("summarize_points", "Summarize data for each subject:", 
                                  choices = c("Show all observations" = 'all',

@@ -2,7 +2,7 @@
 output$correlogram_plot <- renderPlot({
   
   data_subset <- processedInput() %>%
-    dplyr::select(-complete_vars, -time_points)
+    dplyr::select(-time_points)
   
   if(!is.null(input$contents_proc_rows_selected)){
     data_subset <- data_subset[input$contents_proc_rows_selected ,]

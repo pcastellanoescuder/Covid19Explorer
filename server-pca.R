@@ -17,7 +17,7 @@ observe({
     
     y <- colnames(data_variables)
     
-    updateSelectInput(session, "my_variables_pca", choices = y, selected = y[1:2])
+    updateSelectInput(session, "my_variables_pca", choices = y, selected = y[1:3])
     updateSelectInput(session, "my_variables_pca2", choices = c(y, "None"), selected = "None")
     
   }
@@ -50,7 +50,7 @@ output$pcaplot <- renderPlot({
       select_at(vars(matches(total_fac)))
     
     data_names <- processedInput() %>%
-      select_at(vars(matches("id")))
+      select(starts_with("id"))
       
     data_subset <- bind_cols(data_factor, data_subset, data_names)
     
