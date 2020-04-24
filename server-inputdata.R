@@ -213,3 +213,19 @@ output$contents_proc <- DT::renderDataTable({
                 
 })
 
+##
+
+observeEvent(input$process, ({
+  updateCollapse(session, id = "input_collapse_panel", open = "proc_panel",
+                 style = list("proc_panel" = "success",
+                              "raw_panel" = "default"))
+}))
+
+##
+
+observeEvent(datasetInput(),({
+  updateCollapse(session, id =  "input_collapse_panel", open = "raw_panel",
+                 style = list("raw_panel" = "default",
+                              "proc_panel" = "success"))
+}))
+

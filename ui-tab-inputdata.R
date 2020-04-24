@@ -57,9 +57,13 @@ tabPanel("Upload Data",
            
            column(9,
                   
-                  tabsetPanel(
-                    tabPanel("Processed Data", DT::dataTableOutput("contents_proc")),
-                    tabPanel("Raw Data", DT::dataTableOutput("contents"))
-                  ))
+                  bsCollapse(id = "input_collapse_panel", open = "raw_panel", multiple = FALSE,
+                             
+                             bsCollapsePanel(title = "Raw Data", value = "raw_panel", DT::dataTableOutput("contents")),
+                             bsCollapsePanel(title = "Processed Data", value = "proc_panel", DT::dataTableOutput("contents_proc"))
+                             
+                  )
+                  )
          )
 )
+
