@@ -1,4 +1,6 @@
 
+### Input Data
+
 This panel allows users to upload the data that will be analyzed in Covid-19 Explorer.  
 
 Your data should be a **.XLSX** file (recommended) or a **.CSV** file.
@@ -15,3 +17,13 @@ The data **must** have two essential columns: An **ID column** and a **DATE colu
 In all the above cases, upper and lower case do not matter since the program will change everything to lowercase, also changing the blank spaces to "_".
 
 User can also select the desired observations (rows) in the '**Processed Data**' panel by clicking over it to subset the data. Since the moment that user select one or more rows in "Processed Data" panel, ALL plots of Covid-19 Explorer will be focussed ONLY in those selected observations. To deselect all rows, click on "Process" again.
+
+<font color="red">
+
+Dear user,  
+
+Unfortunately the current documentation could be incomplete. We are working on it.  
+
+Sorry for the inconvenience.  
+
+</font>

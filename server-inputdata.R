@@ -181,7 +181,9 @@ output$contents <- DT::renderDataTable({
                 escape = T,  rownames = FALSE, 
                 class = 'cell-border stripe',
                 options = list(
-                  scrollX = TRUE))
+                  scrollX = TRUE,
+                  lengthMenu = list(c(10, 25, 50, 100, -1), c('10','25','50', '100', 'All'))
+                  ))
   
 })
 
@@ -198,7 +200,7 @@ output$contents_proc <- DT::renderDataTable({
                 options = list(
                   scrollX = TRUE,
                   dom = 'Bfrtip',
-                  buttons = 
+                  buttons =
                     list("copy", "print", list(
                       extend="collection",
                       buttons=list(list(extend = "csv",
@@ -209,7 +211,9 @@ output$contents_proc <- DT::renderDataTable({
                                         filename = paste0(Sys.Date(), "_processed_data"))),
                                    text = "Dowload")),
                       order = list(list(2, "desc")),
-                      pageLength = nrow(my_processed)))
+                  pageLength = nrow(my_processed)
+                  # lengthMenu = list(c(10, 25, 50, 100, -1), c('10','25','50', '100', 'All'))
+                  ))
                 
 })
 

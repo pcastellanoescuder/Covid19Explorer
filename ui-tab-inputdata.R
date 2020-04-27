@@ -13,8 +13,6 @@ tabPanel("Upload Data",
                                      radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T),
                                      helpText("Decimal mark should be a dot")),
                     
-                    checkboxInput("remove_first", "Remove first row", FALSE),
-                    
                     radioButtons("summarize_points", "Summarize data for each subject:", 
                                  choices = c("Show all observations" = 'all',
                                              "Show the first and last observation" = 'first_last',
@@ -25,6 +23,8 @@ tabPanel("Upload Data",
                     prettySwitch("showadvanced", "Advanced settings", fill = T, status = "warning"),
                     
                     conditionalPanel(condition = "input.showadvanced",
+                                     
+                                     checkboxInput("remove_first", "Remove first row", FALSE),
                                      
                                      checkboxInput("trans_data", "Format your date column (from xlsx to date)", TRUE),
                                      
