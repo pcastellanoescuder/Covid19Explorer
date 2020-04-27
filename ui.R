@@ -25,6 +25,12 @@ dashboardPage(
             img(src = 'grbio.png',
                 title = "GRBIO", height = "30px"),
             style = "padding-top:10px; padding-bottom:10px;"),
+          class = "dropdown"),
+  
+  tags$li(a(href = 'http://vhir.org/portal1/',
+            img(src = 'vhir.png',
+                title = "VHIR", height = "30px"),
+            style = "padding-top:10px; padding-bottom:10px;"),
           class = "dropdown")
   ),
   
