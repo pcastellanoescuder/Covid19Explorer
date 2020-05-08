@@ -2,7 +2,7 @@ fluidRow(
   column(width = 3,
          wellPanel(
 
-           selectizeInput("dens_feat_raw", label = "Select your variable:", choices = NULL)
+           selectizeInput("dens_feat_raw", label = "Select a numeric variable:", choices = NULL)
 
   )),
 
@@ -10,8 +10,8 @@ fluidRow(
          
          tabsetPanel(
            
-           tabPanel("Table", dataTableOutput("descriptive_raw")),
-           tabPanel("Plots", plotOutput("densityplots_raw", height = "500px"))
+           tabPanel("Summary Table", dataTableOutput("descriptive_raw")),
+           tabPanel("Distribution Plots for Numerical Variables", plotOutput("densityplots_raw", height = "500px"))
          )
          )
   )

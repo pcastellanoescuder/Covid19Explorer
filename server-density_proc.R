@@ -2,15 +2,41 @@
 observe({
   if(!is.null(processedInput())){
 
-    data_subset <- processedInput() %>%
+    # numeric
+    data_num <- processedInput() %>%
       dplyr::select(-time_points) %>%
       select_if(is.numeric)
     
-    x <- colnames(data_subset)
+    x <- colnames(data_num)
     
     updateSelectInput(session, "dens_feat_proc", choices = c("All features", x), selected = "All features")
+    
+    # factor
+    data_fac <- processedInput() %>%
+      dplyr::select(-time_points) %>%
+      select_if(is.factor)
+    
+    y <- colnames(data_fac)
+    
+    updateSelectInput(session, "dens_fact", choices = c("None", y), selected = "None")
   }
 })
+
+##
+
+# observe({
+#   if(!is.null(processedInput()) & input$dens_fact != "none"){
+#     
+#     # factor levels
+#     data_fac <- processedInput() %>%
+#       dplyr::select(input$dens_fact)
+#     colnames(data_fac) <- "selected_factor"
+#     
+#     z <- levels(data_fac$selected_factor)
+#     
+#     updateSelectInput(session, "dens_fact_levels", choices = c("All", z), selected = "All")
+#   }
+# })
 
 ##
 
@@ -101,6 +127,45 @@ output$densityplots_proc <- renderPlot({
     p1 + p2
     
   }
+  
+})
+
+##
+
+output$densityplots_proc_boxplot <- renderPlot({
+  
+  validate(need(input$dens_fact != "None" & input$dens_feat_proc != "All features", 
+                "Please, select one factor and one numeric variable"))
+  
+  mynum <- input$dens_feat_proc
+  myfac <- input$dens_fact
+  
+  ##
+  
+  data_fac <- processedInput() %>%
+    dplyr::select_at(vars(matches(myfac)))
+  data_num <- processedInput() %>%
+    dplyr::select_at(vars(matches(mynum)))
+  data_subset <- cbind(data_fac, data_num)
+  colnames(data_subset) <- c("my_factor", "my_numeric")
+    
+  if(!is.null(input$contents_proc_rows_selected)){
+    data_subset <- data_subset[input$contents_proc_rows_selected ,]
+  } 
+  
+  ggstatsplot::ggbetweenstats(
+    data = data_subset,
+    x = my_factor,
+    y = my_numeric,
+    title = "",
+    messages = FALSE,
+    type = "parametric",
+    pairwise.display = "all",
+    pairwise.comparisons = TRUE,
+    p.adjust.method = "holm",
+    results.subtitle = TRUE,
+    xlab = myfac,
+    ylab = mynum)
   
 })
 

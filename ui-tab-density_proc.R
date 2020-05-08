@@ -2,7 +2,8 @@ fluidRow(
   column(width = 3,
          wellPanel(
            
-           selectizeInput("dens_feat_proc", label = "Select your variable:", choices = NULL)
+           selectizeInput("dens_feat_proc", label = "Select a numeric variable:", choices = NULL),
+           selectizeInput("dens_fact", label = "Select a factor variable:", choices = NULL)
            
          )),
   
@@ -10,8 +11,9 @@ fluidRow(
          
          tabsetPanel(
            
-           tabPanel("Table", dataTableOutput("descriptive_proc")),
-           tabPanel("Plots", plotOutput("densityplots_proc", height = "500px"))
+           tabPanel("Summary Table", dataTableOutput("descriptive_proc")),
+           tabPanel("Distribution Plots for Numerical Variables", plotOutput("densityplots_proc", height = "500px")),
+           tabPanel("Plots by Factor and Tests", plotOutput("densityplots_proc_boxplot"))
          )
   )
 )
