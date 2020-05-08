@@ -17,32 +17,3 @@ data_subset <- data %>%
 
 ##
 
-mynum <- "f_gender"
-myfac <- "tn_hemoglobin"
-
-##
-
-data_fac <- data_subset %>%
-  dplyr::select_at(vars(matches(myfac)))
-data_num <- data_subset  %>%
-  dplyr::select_at(vars(matches(mynum)))
-data_subset <- cbind(data_fac, data_num)
-colnames(data_subset) <- c("my_factor", "my_numeric")
-
-if(!is.null(input$contents_proc_rows_selected)){
-  data_subset <- data_subset[input$contents_proc_rows_selected ,]
-} 
-
-ggstatsplot::ggbetweenstats(
-  data = data_subset,
-  x = my_factor,
-  y = my_numeric,
-  title = "",
-  messages = FALSE,
-  type = "parametric",
-  pairwise.display = "all",
-  pairwise.comparisons = TRUE,
-  p.adjust.method = "holm",
-  results.subtitle = TRUE,
-  xlab = myfac,
-  ylab = mynum)

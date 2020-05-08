@@ -98,7 +98,8 @@ output$cor_plot <- renderPlot({
     {if(isTRUE(input$facet_factor) & input$my_factor != "None")geom_text(data = cors, aes(label = paste0("R = ", cor)),
                                                                                           x = max(keep$Variable1, na.rm = TRUE),
                                                                                           y = min(keep$Variable2, na.rm = TRUE),
-                                                                                          vjust = "inward", hjust = "inward", check_overlap = TRUE, size = 5)} +
+                                                                                          vjust = "inward", hjust = "inward", 
+                                                                         check_overlap = TRUE, size = 5)} +
     {if(isTRUE(input$showL) & input$my_factor != "None")geom_label(aes(x = Variable1, y = Variable2, label = code, color = Factor), size = 5, show.legend = F)} +
     {if(isTRUE(input$showL) & input$my_factor == "None")geom_label(aes(x = Variable1, y = Variable2, label = code), size = 5, show.legend = F)} +
     theme(legend.position = "top",
