@@ -17,6 +17,6 @@ output$correlogram_plot <- renderPlot({
     
   ggcorrplot(cor_matrix, method = input$method_corrplot, lab = input$labels_corrplot, type = input$type_corrplot,    
              ggtheme = ggplot2::theme_bw,
-             colors = my_cols, legend.title = "Correlation")
+             colors = my_cols, legend.title = "Correlation", tl.cex = input$cex)
 
 })

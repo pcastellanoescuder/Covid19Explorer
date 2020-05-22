@@ -11,7 +11,8 @@ fluidRow(
                   textInput("color_outline", "Outline color:", value = "white"),
                   textInput("color_two", "Color min:", value = "red"),
                   
-                  checkboxInput("labels_corrplot", "Show labels")
+                  checkboxInput("labels_corrplot", "Show labels"),
+                  numericInput("cex", "Label size:", value = 12)
 
   )),
   

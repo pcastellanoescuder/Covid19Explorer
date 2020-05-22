@@ -101,30 +101,60 @@ output$densityplots_proc <- renderPlot({
   }
   else{
     
-    data_subset <- data_subset %>%
-      select_at(vars(matches(myvar)))
-    colnames(data_subset) <- "Variable"
-    
-    p1 <- ggplot(data_subset, aes(Variable)) +
-      geom_line(stat = "density") +
-      theme_bw() +
-      ggtitle(myvar) +
-      xlab("Value") +
-      ylab("Density") +
-      theme(legend.position = "none",
-            axis.title.x = element_text(size = 12))
-    
-    p2 <- ggplot(data_subset) +
-      geom_boxplot(aes(x = "Variable", y = Variable)) +
-      theme_bw() +
-      ggtitle(myvar) +
-      xlab("") +
-      ylab("Value") +
-      theme(legend.position = "none",
-            axis.text.x = element_blank(),
-            axis.ticks.x = element_blank())
-    
-    p1 + p2
+    if(input$dens_fact == "None"){
+      
+      data_subset <- data_subset %>%
+        select_at(vars(matches(myvar)))
+      colnames(data_subset) <- "Variable"
+      
+      p1 <- ggplot(data_subset, aes(Variable)) +
+        geom_line(stat = "density") +
+        theme_bw() +
+        ggtitle(myvar) +
+        xlab("Value") +
+        ylab("Density") +
+        theme(legend.position = "none",
+              axis.title.x = element_text(size = 12))
+      
+      p2 <- ggplot(data_subset) +
+        geom_boxplot(aes(x = "Variable", y = Variable)) +
+        theme_bw() +
+        ggtitle(myvar) +
+        xlab("") +
+        ylab("Value") +
+        theme(legend.position = "none",
+              axis.text.x = element_blank(),
+              axis.ticks.x = element_blank())
+      
+      p1 + p2
+      
+    } else{
+      
+      data_subset <- processedInput() %>%
+        dplyr::select(-time_points)
+      
+      if(!is.null(input$contents_proc_rows_selected)){
+        data_subset <- data_subset[input$contents_proc_rows_selected ,]
+      } 
+      
+      myfac <- input$dens_fact
+      
+      data_fac <- data_subset %>%
+        dplyr::select_at(vars(matches(myfac)))
+      data_num <- data_subset %>%
+        dplyr::select_at(vars(matches(myvar)))
+      data_subset <- cbind(data_fac, data_num)
+      colnames(data_subset) <- c("Factor", "my_numeric")
+      
+      ggplot(data_subset, aes(my_numeric, color = Factor)) +
+        geom_line(stat = "density") +
+        theme_bw() +
+        xlab("Value") +
+        ylab("Density") +
+        theme(legend.position = "top",
+              axis.title.x = element_text(size = 12))
+      
+    }
     
   }
   

@@ -43,7 +43,8 @@ dashboardPage(
     menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"), startExpanded = FALSE,
              menuSubItem("Scatterplot", tabName = "scatter"),
              menuSubItem("Global Correlation Plot", tabName = "correlogram"),
-             menuSubItem("Network Visualization", tabName = "network")),
+             menuSubItem("Network Visualization", tabName = "network"),
+             menuSubItem("Correlation Table", tabName = "corrtable")),
     menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
     # menuItem("XXXX", tabName = "XXXX", icon = icon("XXXX")),
     menuItem("Help", tabName = "help", icon = icon("question"))
@@ -74,9 +75,11 @@ dashboardPage(
                 source("ui-tab-correlogram.R",local=TRUE)$value),
         tabItem(tabName = "network",
                 source("ui-tab-network.R",local=TRUE)$value),
+        tabItem(tabName = "corrtable",
+                source("ui-tab-corrtable.R",local=TRUE)$value),
         tabItem(tabName = "pca",
                 source("ui-tab-pca.R",local=TRUE)$value),
-        tabItem("help",
+        tabItem(tabName = "help",
                 source("ui-tab-help.R",local=TRUE)$value)
       ),
       

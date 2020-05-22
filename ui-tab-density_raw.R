@@ -11,7 +11,7 @@ fluidRow(
          tabsetPanel(
            
            tabPanel("Summary Table", dataTableOutput("descriptive_raw")),
-           tabPanel("Distribution Plots for Numerical Variables", plotOutput("densityplots_raw", height = "500px"))
+           tabPanel("Distribution Plots", plotOutput("densityplots_raw", height = "500px"))
          )
          )
   )
