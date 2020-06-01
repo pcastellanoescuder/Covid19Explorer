@@ -15,8 +15,12 @@ observe({
       select(starts_with("tn_"), starts_with("n_"))
 
     x <- colnames(data_subset)
-
-    updateSelectInput(session, "dens_feat_raw", choices = c("All features", x), selected = "All features")
+    
+    if(length(x) > 36){
+      updateSelectInput(session, "dens_feat_raw", choices = x, selected = x[1])
+    } else{
+      updateSelectInput(session, "dens_feat_raw", choices = c("All features", x), selected = "All features")
+    }
   }
 })
 

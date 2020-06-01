@@ -16,14 +16,14 @@ dashboardPage(
           class = "dropdown"),
   
   tags$li(a(href = 'https://sites.google.com/view/estbioinfo',
-            img(src = 'ub.png',
-                title = "UB", height = "30px"),
+            img(src = 'eib.png',
+                title = "EIB", height = "30px"),
             style = "padding-top:10px; padding-bottom:10px;"),
           class = "dropdown"),
   
-  tags$li(a(href = 'https://grbio.upc.edu/en',
-            img(src = 'grbio.png',
-                title = "GRBIO", height = "30px"),
+  tags$li(a(href = 'http://www.nutrimetabolomics.com',
+            img(src = 'nutrimetabolomics.png',
+                title = "NUTRIMETABOLOMICS", height = "30px"),
             style = "padding-top:10px; padding-bottom:10px;"),
           class = "dropdown"),
   
@@ -46,7 +46,7 @@ dashboardPage(
              menuSubItem("Network Visualization", tabName = "network"),
              menuSubItem("Correlation Table", tabName = "corrtable")),
     menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
-    # menuItem("XXXX", tabName = "XXXX", icon = icon("XXXX")),
+    menuItem("Univariate Analysis", tabName = "univariate", icon = icon("sliders")),
     menuItem("Help", tabName = "help", icon = icon("question"))
     
     )),
@@ -79,6 +79,8 @@ dashboardPage(
                 source("ui-tab-corrtable.R",local=TRUE)$value),
         tabItem(tabName = "pca",
                 source("ui-tab-pca.R",local=TRUE)$value),
+        tabItem(tabName = "univariate",
+                source("ui-tab-univariate.R",local=TRUE)$value),
         tabItem(tabName = "help",
                 source("ui-tab-help.R",local=TRUE)$value)
       ),

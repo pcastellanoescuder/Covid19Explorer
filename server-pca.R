@@ -17,7 +17,7 @@ observe({
     
     y <- colnames(data_variables)
     
-    updateSelectInput(session, "my_variables_pca", choices = y, selected = y[1:3])
+    updateSelectInput(session, "my_variables_pca", choices = y, selected = y)
     updateSelectInput(session, "my_variables_pca2", choices = c(y, "None"), selected = "None")
     
   }
@@ -101,39 +101,81 @@ output$pcaplot <- renderPlot({
       colnames(data_names) <- c("ID", "X", "Y")
     }
     
+    data_names <- data_names %>%
+      mutate(ID = as.factor(as.character(ID)))
+    
     ##
     
     if(is.null(idx_fac_total)){
       
-      fviz_pca_biplot(res_pca, 
-                      axes = dims,
-                      repel = FALSE, 
-                      title = "", 
-                      addEllipses = input$ellipse_pca,
-                      label = "var",
-                      col.var = "red",
-                      # palette = input$pca_palette,
-                      alpha.ind = 0.8) +
-        theme_bw() +
-        {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
-        theme(legend.position = "top") 
+      if(input$load_pca){
+        
+        fviz_pca_biplot(res_pca, 
+                        axes = dims,
+                        repel = FALSE, 
+                        pointsize = 4,
+                        title = "", 
+                        addEllipses = input$ellipse_pca,
+                        label = "var",
+                        col.var = "red",
+                        alpha.ind = 0.8) +
+          theme_bw() +
+          {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+          theme(legend.position = "top") 
+      }
+      else{
+        
+        fviz_pca_ind(res_pca, 
+                     axes = dims,
+                     geom = "point",
+                     repel = FALSE, 
+                     pointsize = 4,
+                     title = "", 
+                     addEllipses = input$ellipse_pca,
+                     alpha.ind = 0.8) +
+          theme_bw() +
+          {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+          theme(legend.position = "top") 
+        
+      }
 
     } 
     else{
       
-      fviz_pca_biplot(res_pca, 
-                      axes = dims,
-                      repel = FALSE, 
-                      title = "", 
-                      habillage = idx_fac_total, 
-                      addEllipses = input$ellipse_pca,
-                      label = "var",
-                      col.var = "red",
-                      # palette = input$pca_palette,
-                      alpha.ind = 0.8) +
-        theme_bw() +
-        {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
-        theme(legend.position = "top") 
+      if(input$load_pca){
+        
+        fviz_pca_biplot(res_pca, 
+                        axes = dims,
+                        repel = FALSE, 
+                        pointsize = 4,
+                        title = "", 
+                        habillage = idx_fac_total, 
+                        addEllipses = input$ellipse_pca,
+                        label = "var",
+                        col.var = "red",
+                        alpha.ind = 0.8) +
+          theme_bw() +
+          {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+          theme(legend.position = "top") 
+        
+      }
+      else{
+        
+        fviz_pca_ind(res_pca, 
+                     axes = dims,
+                     geom = "point",
+                     repel = FALSE, 
+                     pointsize = 4,
+                     title = "", 
+                     habillage = idx_fac_total, 
+                     addEllipses = input$ellipse_pca,
+                     alpha.ind = 0.8) +
+          theme_bw() +
+          {if(input$labs_pca)geom_text(data = data_names, aes(x = X, y = Y, label = ID))} +
+          theme(legend.position = "top") 
+        
+      }
+
     }
     
   } 

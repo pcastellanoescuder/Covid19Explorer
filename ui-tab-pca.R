@@ -13,8 +13,7 @@ fluidPage(column(width = 3,
                    
                    radioButtons("dims_pca", "Show dimensions:", choices = c("1 and 2", "2 and 3", "1 and 3"), selected = "1 and 2"),
                    
-                   # selectInput("pca_palette", label = "Select group color palette:", 
-                   #             choices = c("npg", "aaas", "lancet", "jco", "ucscgb", "uchicago", "simpsons", "rickandmorty")),
+                   checkboxInput("load_pca", "Show loadings", FALSE),
                    
                    checkboxInput("labs_pca", "Show labels", FALSE),
                    
@@ -24,7 +23,7 @@ fluidPage(column(width = 3,
           
           column(width = 9,
                  
-                 plotOutput("pcaplot", height = "500px")
+                 plotOutput("pcaplot", height = "600px")
                  
                  )
           )

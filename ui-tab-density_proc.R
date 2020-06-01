@@ -12,8 +12,7 @@ fluidRow(
          tabsetPanel(
            
            tabPanel("Summary Table", dataTableOutput("descriptive_proc")),
-           tabPanel("Distribution Plots", plotOutput("densityplots_proc", height = "500px")),
-           tabPanel("Boxplots with Tests", plotOutput("densityplots_proc_boxplot"))
+           tabPanel("Distribution Plots", plotOutput("densityplots_proc", height = "500px"))
          )
   )
 )
