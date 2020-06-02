@@ -4,6 +4,8 @@ fluidRow(
            
            selectizeInput("features", label = "Select your features:", choices = NULL, multiple = TRUE),
            
+           selectizeInput("time_fact", label = "Select a factor variable (optional):", choices = NULL),
+           
            checkboxInput("wrap_into", "Split by ID", TRUE),
            
            checkboxInput("plot_lines", "Show lines", TRUE)
@@ -12,7 +14,11 @@ fluidRow(
   
   column(width = 9,
          
-         plotOutput("timeplots", height = "500px")
+         tabsetPanel(
+           
+           tabPanel("Plot Over Time", plotOutput("timeplots", height = "500px")),
+           tabPanel("Two-Time Comparisson", plotOutput("twotimes", height = "500px"))
+         )
          
          )
   )
