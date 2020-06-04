@@ -47,6 +47,9 @@ dashboardPage(
              menuSubItem("Correlation Table", tabName = "corrtable")),
     menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
     menuItem("Univariate Analysis", tabName = "univariate", icon = icon("sliders")),
+    menuItem("Prediction Models", tabName = "prediction", icon = icon("chart-line"), startExpanded = FALSE,
+             menuSubItem("Lasso Regression", tabName = "lasso"),
+             menuSubItem("Random Forest", tabName = "rf")),
     menuItem("Help", tabName = "help", icon = icon("question"))
     
     )),
@@ -81,6 +84,10 @@ dashboardPage(
                 source("ui-tab-pca.R",local=TRUE)$value),
         tabItem(tabName = "univariate",
                 source("ui-tab-univariate.R",local=TRUE)$value),
+        tabItem(tabName = "lasso",
+                source("ui-tab-lasso.R",local=TRUE)$value),
+        tabItem(tabName = "rf",
+                source("ui-tab-rf.R",local=TRUE)$value),
         tabItem(tabName = "help",
                 source("ui-tab-help.R",local=TRUE)$value)
       ),

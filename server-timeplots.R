@@ -87,6 +87,7 @@ output$twotimes <- renderPlot({
   else{
     
     validate(need(!is.null(input$contents_proc_rows_selected), "No rows selected in the 'Input Data' panel"))
+    validate(need(input$time_fact != "None", "Select a factor"))
     
     if(is.null(input$contents_proc_rows_selected)){
       return(NULL)
@@ -117,10 +118,15 @@ output$twotimes <- renderPlot({
         geom_point(size = 3, alpha = 0.8) +
         theme_bw() +
         xlab("") +
-        ggtitle(features) +
-        ylab("Value") +
-        theme(legend.position = "top")
-      
+        ylab(paste0(features, " value")) +
+        theme(legend.position = "top",
+              legend.text = element_text(size = 12),
+              legend.title = element_text(size = 15),
+              axis.text.x = element_text(size = 12),
+              axis.text.y = element_text(size = 12),
+              axis.title.x = element_text(size = 15),
+              axis.title.y = element_text(size = 15)) 
+        
     }
   }
   

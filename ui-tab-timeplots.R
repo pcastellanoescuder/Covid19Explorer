@@ -16,8 +16,8 @@ fluidRow(
          
          tabsetPanel(
            
-           tabPanel("Plot Over Time", plotOutput("timeplots", height = "500px")),
-           tabPanel("Two-Time Comparisson", plotOutput("twotimes", height = "500px"))
+           tabPanel("Over Time Plot", plotOutput("timeplots", height = "500px")),
+           tabPanel("Two-Time Plot", plotOutput("twotimes", height = "500px"))
          )
          
          )

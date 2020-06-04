@@ -60,6 +60,8 @@ source("server-network.R",local = TRUE)
 source("server-corrtable.R",local = TRUE)
 source("server-pca.R",local = TRUE)
 source("server-univariate.R",local = TRUE)
+source("server-lasso.R",local = TRUE)
+source("server-rf.R",local = TRUE)
   
 })
 
