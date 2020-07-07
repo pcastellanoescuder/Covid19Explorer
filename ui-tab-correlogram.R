@@ -3,7 +3,7 @@ fluidRow(
   column(width = 3,
                 wellPanel(
                   
-                  selectInput("method_corrplot", label = "Select method:", choices = c("circle", "square")),
+                  selectInput("method_corrplot", label = "Select method:", choices = c("circle", "square"), selected = "square"),
                   
                   selectInput("type_corrplot", label = "Select type:", choices = c("full", "lower")),
                 

@@ -7,7 +7,7 @@ dashboardPage(
   
   dashboardHeader(
     
-  title = "Covid-19 Explorer",
+  title = HTML("<b>Covid19Explorer</b>"),
   
   tags$li(a(href = 'http://www.ueb.vhir.org',
             img(src = 'ueb.png',
@@ -21,11 +21,11 @@ dashboardPage(
             style = "padding-top:10px; padding-bottom:10px;"),
           class = "dropdown"),
   
-  tags$li(a(href = 'http://www.nutrimetabolomics.com',
-            img(src = 'nutrimetabolomics.png',
-                title = "NUTRIMETABOLOMICS", height = "30px"),
-            style = "padding-top:10px; padding-bottom:10px;"),
-          class = "dropdown"),
+  # tags$li(a(href = 'http://www.nutrimetabolomics.com',
+  #           img(src = 'nutrimetabolomics.png',
+  #               title = "NUTRIMETABOLOMICS", height = "30px"),
+  #           style = "padding-top:10px; padding-bottom:10px;"),
+  #         class = "dropdown"),
   
   tags$li(a(href = 'http://vhir.org/portal1/',
             img(src = 'vhir.png',
@@ -42,7 +42,7 @@ dashboardPage(
     menuItem("Time Plots", tabName = "timeplots", icon = icon("chart-line")),
     menuItem("Correlations", tabName = "correlations", icon = icon("chart-line"), startExpanded = FALSE,
              menuSubItem("Scatterplot", tabName = "scatter"),
-             menuSubItem("Global Correlation Plot", tabName = "correlogram"),
+             menuSubItem("Correlogram", tabName = "correlogram"),
              menuSubItem("Network Visualization", tabName = "network"),
              menuSubItem("Correlation Table", tabName = "corrtable")),
     menuItem("Principal Component Analysis", tabName = "pca", icon = icon("object-group")),
