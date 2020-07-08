@@ -35,8 +35,6 @@ LASSO <- eventReactive(input$run_lasso,
     my_factor <- input$my_factor_lasso
     my_vars <- input$my_variables_lasso
     
-    validate(need(length(levels(my_factor)) == 2, "Your outcome must have 2 levels"))
-    
     ##
     
     data_subset <- processedInput() %>%
@@ -72,13 +70,13 @@ LASSO <- eventReactive(input$run_lasso,
     
     ## LASSO
     
-    if(length(table(data_factor[,1])) > 2){
-    family <- "multinomial"
-    } else{
-    family <- "binomial"
-    }
+    # if(length(table(data_factor[,1])) > 2){
+    # family <- "multinomial"
+    # } else{
+    # family <- "binomial"
+    # }
     
-    validate(need(family == "binomial", "Dependent variable (Y) must have two levels"))
+    # validate(need(family == "binomial", "Dependent variable (Y) must have two levels"))
     
     cv_fit <- glmnet::cv.glmnet(data.matrix(train_x), 
                                 as.matrix(train_y), 
