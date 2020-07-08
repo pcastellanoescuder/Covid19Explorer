@@ -24,7 +24,9 @@ observe({
 
 ##
 
-LASSO <- reactive({
+LASSO <- eventReactive(input$run_lasso,
+                       ignoreNULL = TRUE, {
+                         withProgress(message = "Performing model, please wait",{
   
   if(!is.null(processedInput())){
     
@@ -101,8 +103,8 @@ LASSO <- reactive({
     return(NULL)
     
     }
-  
-})
+                           })
+                         })
 
 ##
 

@@ -11,7 +11,10 @@ fluidPage(column(width = 3,
                    
                    selectInput("my_factor_lasso", label = "Dependent Variable (Y):", choices = NULL),
                    
-                   selectInput("my_variables_lasso", label = "Independent Variables (X):", choices = NULL, multiple = T)
+                   selectInput("my_variables_lasso", label = "Independent Variables (X):", choices = NULL, multiple = T),
+                   
+                   actionButton("run_lasso", "Run", icon("step-forward"),
+                                style="color: #fff; background-color: #00b300; border-color: #009900")
 
                    )
                  ),

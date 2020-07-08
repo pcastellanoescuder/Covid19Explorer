@@ -24,7 +24,9 @@ observe({
 
 ##
 
-RandomF <- reactive({
+RandomF <- eventReactive(input$run_rf,
+                         ignoreNULL = TRUE, {
+                           withProgress(message = "Performing model, please wait",{
   
   if(!is.null(processedInput())){
     
@@ -88,8 +90,8 @@ RandomF <- reactive({
     return(NULL)
     
     }
-  
-})
+                             })
+                           })
 
 ##
 

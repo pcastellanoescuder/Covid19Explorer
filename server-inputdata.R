@@ -281,3 +281,20 @@ output$samples_num <- renderValueBox({
   )
 })
 
+##
+
+output$cat_feat <- renderValueBox({
+  
+  if(!is.null(processedInput())){
+    
+    data_subset <- processedInput() %>%
+      select_at(vars(starts_with("c_")))
+    
+  }
+  
+  infoBox(
+    "Categorical Features", paste0(ncol(data_subset)), icon = icon("list"),
+    color = "green", fill = TRUE
+  )
+})
+

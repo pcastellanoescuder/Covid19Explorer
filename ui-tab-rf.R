@@ -7,7 +7,10 @@ fluidPage(column(width = 3,
                    
                    selectInput("my_factor_rf", label = "Dependent Variable (Y):", choices = NULL),
                    
-                   selectInput("my_variables_rf", label = "Independent Variables (X):", choices = NULL, multiple = T)
+                   selectInput("my_variables_rf", label = "Independent Variables (X):", choices = NULL, multiple = T),
+                   
+                   actionButton("run_rf", "Run", icon("step-forward"),
+                                style="color: #fff; background-color: #00b300; border-color: #009900")
 
                    )
                  ),
