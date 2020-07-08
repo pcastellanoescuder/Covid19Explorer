@@ -33,6 +33,8 @@ LASSO <- reactive({
     my_factor <- input$my_factor_lasso
     my_vars <- input$my_variables_lasso
     
+    validate(need(length(levels(my_factor)) == 2, "Your outcome must have 2 levels"))
+    
     ##
     
     data_subset <- processedInput() %>%
@@ -139,9 +141,11 @@ output$cm_lasso <- renderDataTable({
 
 ##
 
-output$accuracy_lasso <- renderText({
+output$accuracy_lasso <- renderValueBox({
   
-  paste("Current Model Accuracy:", round(LASSO()$accuracy, 3))
-  
+  infoBox(
+    "Model Accuracy", round(LASSO()$accuracy, 3), icon = icon("thermometer-half"),
+    color = "light-blue", fill = TRUE
+  )
 })
 

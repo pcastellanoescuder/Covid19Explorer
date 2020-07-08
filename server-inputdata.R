@@ -267,3 +267,17 @@ output$factor_feat <- renderValueBox({
   )
 })
 
+##
+
+output$samples_num <- renderValueBox({
+  
+  if(!is.null(processedInput())){
+    data_subset <- processedInput()
+  }
+  
+  infoBox(
+    "Samples", paste0(nrow(data_subset)), icon = icon("list"),
+    color = "aqua", fill = TRUE
+  )
+})
+

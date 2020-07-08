@@ -128,9 +128,11 @@ output$cm_rf <- renderDataTable({
 
 ##
 
-output$accuracy_rf <- renderText({
+output$accuracy_rf <- renderValueBox({
   
-  paste("Current Model Accuracy:", round(RandomF()$accuracy, 3))
-  
+  infoBox(
+    "Model Accuracy", round(RandomF()$accuracy, 3), icon = icon("thermometer-half"),
+    color = "light-blue", fill = TRUE
+  )
 })
 

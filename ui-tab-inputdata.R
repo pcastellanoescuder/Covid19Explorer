@@ -60,6 +60,7 @@ fluidRow(
          
          fluidRow(
            
+           valueBoxOutput("samples_num", width = 4),
            valueBoxOutput("number_feat", width = 5),
            valueBoxOutput("factor_feat", width = 5)
            
