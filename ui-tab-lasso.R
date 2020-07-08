@@ -18,10 +18,10 @@ fluidPage(column(width = 3,
           
           column(width = 9,
                  
-                 textOutput("accuracy_lasso"),
-                 
-                 br(),
-                 
+                 fluidRow(
+                   valueBoxOutput("accuracy_lasso", width = 5),
+                 ),
+
                  tabsetPanel(
                    tabPanel("Selected Features", DT::dataTableOutput("coeff_lasso")),
                    tabPanel("Confusion Matrix", DT::dataTableOutput("cm_lasso"))

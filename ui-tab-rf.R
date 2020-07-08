@@ -14,9 +14,9 @@ fluidPage(column(width = 3,
           
           column(width = 9,
                  
-                 textOutput("accuracy_rf"),
-                 
-                 br(),
+                 fluidRow(
+                   valueBoxOutput("accuracy_rf", width = 5),
+                 ),
                  
                  tabsetPanel(
                    tabPanel("Feature Importance", DT::dataTableOutput("coeff_rf")),

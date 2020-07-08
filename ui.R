@@ -7,7 +7,7 @@ dashboardPage(
   
   dashboardHeader(
     
-  title = HTML("<b>Covid19Explorer</b>"),
+  title = "Covid19Explorer",
   
   tags$li(a(href = 'http://www.ueb.vhir.org',
             img(src = 'ueb.png',

@@ -1,5 +1,6 @@
 
 fluidRow(
+  
   column(width = 3,
          
          wellPanel(
@@ -12,16 +13,16 @@ fluidRow(
                             radioButtons("separator", "Separator:", choices = c(",", ";"), selected = ";", inline = T),
                             helpText("Decimal mark should be a dot")),
            
-           radioButtons("summarize_points", "Summarize data for each subject:", 
-                        choices = c("Show all observations" = 'all',
-                                    "Show the first and last observation" = 'first_last',
-                                    "Show the first observation" = 'first',
-                                    "Show the last observation" = 'last'),
-                        selected = 'all'),
-           
-           prettySwitch("showadvanced", "Advanced settings", fill = T, status = "warning"),
+           prettySwitch("showadvanced", "Advanced settings", fill = TRUE, status = "warning"),
            
            conditionalPanel(condition = "input.showadvanced",
+                            
+                            radioButtons("summarize_points", "Summarize data for each subject:", 
+                                         choices = c("Show all observations" = 'all',
+                                                     "Show the first and last observation" = 'first_last',
+                                                     "Show the first observation" = 'first',
+                                                     "Show the last observation" = 'last'),
+                                         selected = 'all'),
                             
                             checkboxInput("remove_first", "Remove first row", FALSE),
                             
@@ -52,15 +53,27 @@ fluidRow(
                                                                                                           icon = "question",
                                                                                                           colour = "green")
            )
-),
+         
+         ),
   
   column(9,
          
-         bsCollapse(id = "input_collapse_panel", open = "raw_panel", multiple = FALSE,
-                    
-                    bsCollapsePanel(title = "Raw Data", value = "raw_panel", DT::dataTableOutput("contents")),
-                    bsCollapsePanel(title = "Processed Data", value = "proc_panel", DT::dataTableOutput("contents_proc"))
-                    
+         fluidRow(
+           
+           valueBoxOutput("number_feat", width = 5),
+           valueBoxOutput("factor_feat", width = 5)
+           
+         ),
+         
+         fluidRow(
+           
+           bsCollapse(id = "input_collapse_panel", open = "raw_panel", multiple = FALSE,
+                      
+                      bsCollapsePanel(title = "Raw Data", value = "raw_panel", DT::dataTableOutput("contents")),
+                      bsCollapsePanel(title = "Processed Data", value = "proc_panel", DT::dataTableOutput("contents_proc"))
+                      
+           )
+           
          )
          )
 )

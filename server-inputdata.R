@@ -233,3 +233,37 @@ observeEvent(datasetInput(),({
                               "proc_panel" = "success"))
 }))
 
+##
+
+output$number_feat <- renderValueBox({
+  
+  if(!is.null(processedInput())){
+    
+    data_subset <- processedInput() %>%
+      select_at(vars(starts_with("n_") | starts_with("tn_")))
+    
+  }
+  
+  infoBox(
+    "Numeric Features", paste0(ncol(data_subset)), icon = icon("list"),
+    color = "purple", fill = TRUE
+  )
+})
+
+##
+
+output$factor_feat <- renderValueBox({
+  
+  if(!is.null(processedInput())){
+    
+    data_subset <- processedInput() %>%
+      select_at(vars(starts_with("f_")))
+    
+  }
+  
+  infoBox(
+    "Factorial Features", paste0(ncol(data_subset)), icon = icon("list"),
+    color = "yellow", fill = TRUE
+  )
+})
+
