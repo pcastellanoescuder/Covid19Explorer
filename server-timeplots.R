@@ -18,6 +18,9 @@ observe({
     
     updateSelectInput(session, "time_fact", choices = c("None", y), selected = "None")
     
+    # time factor
+    updateSelectInput(session, "my_factor_time", choices = c("None", y), selected = "None")
+    
   }
 })
 
@@ -37,44 +40,69 @@ output$timeplots <- renderPlot({
   }
   
   else{
-  
-    data_subset <- processedInput() %>%
-      dplyr::select(-time_points)
     
-    if(!is.null(input$contents_proc_rows_selected)){
-      data_subset <- data_subset[input$contents_proc_rows_selected ,]
-    } 
-  
-  data_subset <- data_subset %>%
-    pivot_longer(cols = starts_with("tn_") | starts_with("n_")) %>% 
-    dplyr::rename(variable = name) %>%
-    dplyr::filter(variable %in% input$features)
+    if(input$my_factor_time != "None"){
+      
+      data_subset <- processedInput() %>%
+        dplyr::select(-time_points)
+      
+      if(!is.null(input$contents_proc_rows_selected)){
+        data_subset <- data_subset[input$contents_proc_rows_selected ,]
+      } 
+      
+      data_subset <- data_subset %>%
+        pivot_longer(cols = starts_with("tn_") | starts_with("n_")) %>% 
+        dplyr::rename(variable = name) %>%
+        dplyr::filter(variable %in% input$features) %>%
+        rename_at(vars(matches(input$my_factor_time)), ~ "my_fac_var")
+      
+      ggplot(data_subset, aes(my_fac_var, value, color = variable, label = id)) +
+        geom_boxplot(alpha = 0.5) +
+        geom_point(alpha = 0.8, position = position_jitterdodge()) +
+        ylab("Value") +
+        xlab("") +
+        theme_bw() +
+        theme(legend.position = "top",
+              legend.text = element_text(size = 12),
+              legend.title = element_blank(),
+              axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+              axis.text.y = element_text(size = 12),
+              axis.title.x = element_text(size = 15),
+              axis.title.y = element_text(size = 15))
 
-  ggplot(data_subset) +
-    {if(isTRUE(input$plot_lines))geom_line(aes(date, value, color = variable, shape = variable, label = id), 
+    } else {
+      
+      data_subset <- processedInput() %>%
+        dplyr::select(-time_points)
+      
+      if(!is.null(input$contents_proc_rows_selected)){
+        data_subset <- data_subset[input$contents_proc_rows_selected ,]
+      } 
+      
+      data_subset <- data_subset %>%
+        pivot_longer(cols = starts_with("tn_") | starts_with("n_")) %>% 
+        dplyr::rename(variable = name) %>%
+        dplyr::filter(variable %in% input$features)
+      
+      ggplot(data_subset) +
+        {if(isTRUE(input$plot_lines))geom_line(aes(date, value, color = variable, shape = variable, label = id), 
                                                size = 2, alpha = 0.75)} +
-    geom_point(aes(date, value, color = variable, shape = variable, label = id), size = 3, alpha = 0.75) +
-    ylab("Value") +
-    xlab("") +
-    theme_bw() +
-    theme(legend.position = "top",
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 15),
-          axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-          axis.text.y = element_text(size = 12),
-          axis.title.x = element_text(size = 15),
-          axis.title.y = element_text(size = 15)) +
-    # {if(input$wrap_into == "gender")facet_wrap(vars(gender))} +
-    # {if(input$wrap_into == "department")facet_wrap(vars(department))} +
-    {if(input$wrap_into)facet_wrap(vars(id))} +
-    labs(color = "", shape = "") 
-    # scale_x_continuous(labels = function(x)format(as.Date(as.character(x), "%j"), "%d-%b"))
-  
-  # plotly::ggplotly(my_time_plot)
-  
+        geom_point(aes(date, value, color = variable, shape = variable, label = id), size = 3, alpha = 0.75) +
+        ylab("Value") +
+        xlab("") +
+        theme_bw() +
+        theme(legend.position = "top",
+              legend.text = element_text(size = 12),
+              legend.title = element_text(size = 15),
+              axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+              axis.text.y = element_text(size = 12),
+              axis.title.x = element_text(size = 15),
+              axis.title.y = element_text(size = 15)) +
+        {if(input$wrap_into)facet_wrap(vars(id))} +
+        labs(color = "", shape = "") 
+    }
   }
     }
-  
   })
 
 ##

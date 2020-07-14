@@ -8,9 +8,12 @@ fluidRow(
            
            checkboxInput("wrap_into", "Split by ID", TRUE),
            
-           checkboxInput("plot_lines", "Show lines", TRUE)
-  
-  )),
+           checkboxInput("plot_lines", "Show lines", TRUE),
+           
+           selectInput("my_factor_time", label = "Select a factor as Date:", choices = NULL)
+           
+           )
+         ),
   
   column(width = 9,
          
@@ -18,8 +21,7 @@ fluidRow(
            
            tabPanel("Over Time Plot", plotOutput("timeplots", height = "500px")),
            tabPanel("Two-Time Plot", plotOutput("twotimes", height = "500px"))
-         )
-         
+           )
          )
   )
 

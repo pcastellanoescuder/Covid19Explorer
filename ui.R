@@ -1,5 +1,3 @@
-# options(repos = BiocManager::repositories())
-# getOption("repos")
 
 source("helpers.R")
 
@@ -21,11 +19,11 @@ dashboardPage(
             style = "padding-top:10px; padding-bottom:10px;"),
           class = "dropdown"),
   
-  # tags$li(a(href = 'http://www.nutrimetabolomics.com',
-  #           img(src = 'nutrimetabolomics.png',
-  #               title = "NUTRIMETABOLOMICS", height = "30px"),
-  #           style = "padding-top:10px; padding-bottom:10px;"),
-  #         class = "dropdown"),
+  tags$li(a(href = 'http://www.nutrimetabolomics.com',
+            img(src = 'nutrimetabolomics.png',
+                title = "NUTRIMETABOLOMICS", height = "30px"),
+            style = "padding-top:10px; padding-bottom:10px;"),
+          class = "dropdown"),
   
   tags$li(a(href = 'http://vhir.org/portal1/',
             img(src = 'vhir.png',
