@@ -17,25 +17,25 @@ fluidRow(
                         selected = 'ttest'
                         ),
            
-           conditionalPanel(condition = ("input.univariate_test == 'ttest'"),
-                            
-                            radioButtons("var_ttest",  "Variances are equal:",
-                                         choices = c("TRUE" = TRUE, 
-                                                     "FALSE (Welch's T-test)" = FALSE),
-                                         selected = FALSE),
-                            
-                            radioButtons("paired_ttest",  "Paired samples:",
-                                         choices = c("TRUE" = TRUE, 
-                                                     "FALSE" = FALSE),
-                                         selected = FALSE)
-                            ),
+           # conditionalPanel(condition = ("input.univariate_test == 'ttest'"),
+           #                  
+           #                  radioButtons("var_ttest",  "Variances are equal:",
+           #                               choices = c("TRUE" = TRUE, 
+           #                                           "FALSE (Welch's T-test)" = FALSE),
+           #                               selected = FALSE),
+           #                  
+           #                  radioButtons("paired_ttest",  "Paired samples:",
+           #                               choices = c("TRUE" = TRUE, 
+           #                                           "FALSE" = FALSE),
+           #                               selected = FALSE)
+           #                  ),
            
-           conditionalPanel(condition = ("input.univariate_test == 'mann'"),
-                            
-                            radioButtons("paired_mann",  h4("Paired samples:"),
-                                         choices = c("TRUE (Wilcoxon Signed Rank Test)" = TRUE, 
-                                                     "FALSE" = FALSE),
-                                         selected = FALSE)),
+           # conditionalPanel(condition = ("input.univariate_test == 'mann'"),
+           #                  
+           #                  radioButtons("paired_mann",  h4("Paired samples:"),
+           #                               choices = c("TRUE (Wilcoxon Signed Rank Test)" = TRUE, 
+           #                                           "FALSE" = FALSE),
+           #                               selected = FALSE)),
            
            actionButton("play_test","Analyze", icon("step-forward"),
                         style="color: #fff; background-color: #00b300; border-color: #009900") %>% helper(type = "markdown",

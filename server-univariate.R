@@ -28,14 +28,14 @@ observe({
 PREPARE_UNI <- reactive({
   
   data_subset <- processedInput() %>%
-    dplyr::select(-time_points) %>%
-    select_if(is.numeric)
+    select_at(vars(starts_with("tn_") | starts_with("n_")))
 
   data_fact <- processedInput() %>%
-    select_at(vars(matches(input$fact_uni)))
-  colnames(data_fact) <- "my_uni_factor"
+    select_at(vars(matches(input$fact_uni))) %>%
+    as.data.frame() %>%
+    dplyr::rename(my_uni_factor = 1)
   
-  data_subset <- bind_cols(data_fact, data_subset)
+  data_subset <- cbind(data_fact, data_subset)
   
   if(!is.null(input$contents_proc_rows_selected)){
     data_subset <- data_subset[input$contents_proc_rows_selected ,]
@@ -56,29 +56,85 @@ Univ_analisis <-
                     
                     target <- data %>%
                       select(my_uni_factor) %>%
-                      rownames_to_column("id")
+                      rownames_to_column("id") %>%
+                      dplyr::rename(Group = my_uni_factor)
                     
-                    features <- data %>%
+                    e <- data %>%
                       select(-my_uni_factor)
+
+                    Group <- as.factor(target$Group)
                     
-                    data <- POMA::PomaMSnSetClass(target = target, features = features)
+                    group_means <- e %>% 
+                      as.data.frame() %>% 
+                      mutate(group = Group)
+                    
+                    ##
+                    
+                    mean_group <- group_means %>% 
+                      group_by(group) %>% 
+                      dplyr::summarise(across(
+                        .cols = where(is.numeric), 
+                        .fns = list(mean = mean), na.rm = TRUE, 
+                        .names = "{col}"
+                      )) %>%
+                      ungroup() %>%
+                      column_to_rownames("group") %>%
+                      t() %>%
+                      as_tibble() %>%
+                      rename_all(~ paste0("mean_", .))
+                    
+                    sd_group <- group_means %>% 
+                      group_by(group) %>% 
+                      dplyr::summarise(across(
+                        .cols = where(is.numeric), 
+                        .fns = list(sd = sd), na.rm = TRUE, 
+                        .names = "{col}"
+                      )) %>%
+                      ungroup() %>%
+                      column_to_rownames("group") %>%
+                      t() %>%
+                      as_tibble() %>%
+                      rename_all(~ paste0("sd_", .))
+                    
+                    group_means <- round(cbind(mean_group, sd_group), 2)
                     
                     ##
                     
                     if (input$univariate_test == "ttest"){
                       
-                      param_ttest <- POMA::PomaUnivariate(data, method = "ttest", 
-                                                          paired = input$paired_ttest, 
-                                                          var_equal = input$var_ttest)
-                      return(list(param_ttest = param_ttest))
+                      # stat <- function(x) {t.test(x ~ Group, na.rm = TRUE, alternative = c("two.sided"),
+                      #                             var.equal = input$var_ttest, paired = input$paired_ttest)$p.value}
+                      
+                      stat <- function(x) {t.test(x ~ Group, na.rm = TRUE, alternative = c("two.sided"),
+                                                  var.equal = FALSE, paired = FALSE)$p.value}
+                      
+                      p <- data.frame(pvalue = apply(FUN = stat, MARGIN = 2, X = e))
+                      p <- p %>%
+                        rownames_to_column("ID") %>%
+                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr")) %>%
+                        column_to_rownames("ID")
+
+                      p <- cbind(group_means, p) %>%
+                        rownames_to_column("ID") %>%
+                        mutate(Fold_Change_Ratio = as.numeric(round(group_means[, 2]/group_means[, 1], 3)),
+                               Difference_Of_Means = as.numeric(round(group_means[, 2] - group_means[, 1], 3))) %>%
+                        column_to_rownames("ID") %>%
+                        dplyr::select(1,2,3,4,7,8,5,6)
+                      
+                      return(list(param_ttest = p))
                     }
                     
                     ##
                     
                     else if (input$univariate_test == "anova"){
                       
-                      param_anova <- POMA::PomaUnivariate(data, method = "anova", covariates = FALSE)
-                      return(list(param_anova = param_anova))
+                      stat2 <- function(x) {anova(aov(x ~ Group))$"Pr(>F)"[1]}
+                      p2 <- data.frame(pvalue = apply(FUN = stat2, MARGIN = 2, X = e))
+                      p2 <- p2 %>% 
+                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr"))
+                      p2 <- bind_cols(group_means, p2)
+                      
+                      return(list(param_anova = p2))
 
                     }
                     
@@ -86,7 +142,23 @@ Univ_analisis <-
                     
                     else if (input$univariate_test == "mann"){
                       
-                      non_param_mann <- POMA::PomaUnivariate(data, method = "mann", paired = input$paired_mann)
+                      # non_param_mann <- data.frame(pvalue = apply(e, 2, function(x) {wilcox.test(x ~ as.factor(Group), 
+                      #                                                                            paired = input$paired_mann)$p.value}))
+                      
+                      non_param_mann <- data.frame(pvalue = apply(e, 2, function(x) {wilcox.test(x ~ as.factor(Group), 
+                                                                                                 paired = FALSE)$p.value}))
+                      
+                      non_param_mann <- non_param_mann %>% 
+                        rownames_to_column("ID") %>% 
+                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr")) %>% 
+                        column_to_rownames("ID")
+                      non_param_mann <- cbind(group_means, non_param_mann) %>% 
+                        rownames_to_column("ID") %>% 
+                        mutate(Fold_Change_Ratio = as.numeric(round(group_means[, 2]/group_means[, 1], 3)), 
+                               Difference_Of_Means = as.numeric(round(group_means[, 2] - group_means[, 1], 3))) %>% 
+                        column_to_rownames("ID") %>% 
+                        dplyr::select(1, 2, 3, 4, 7, 8, 5, 6)
+                      
                       return(list(non_param_mann = non_param_mann))
                       
                     }
@@ -95,7 +167,12 @@ Univ_analisis <-
                     
                     else if (input$univariate_test == "kruskal"){
                       
-                      non_param_kru <- POMA::PomaUnivariate(data, method = "kruskal")
+                      non_param_kru <- data.frame(pvalue = apply(e, 2, function(x) {kruskal.test(x ~ as.factor(Group))$p.value}))
+                      non_param_kru <- non_param_kru %>% 
+                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr"), 
+                               Kruskal_Wallis_Rank_Sum = apply(e, 2, function(x) {kruskal.test(x ~ as.factor(Group))$statistic}))
+                      non_param_kru <- bind_cols(group_means, non_param_kru)
+                      
                       return(list(non_param_kru = non_param_kru))
                     }
                     })
