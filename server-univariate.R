@@ -131,7 +131,9 @@ Univ_analisis <-
                       stat2 <- function(x) {anova(aov(x ~ Group))$"Pr(>F)"[1]}
                       p2 <- data.frame(pvalue = apply(FUN = stat2, MARGIN = 2, X = e))
                       p2 <- p2 %>% 
-                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr"))
+                        rownames_to_column("ID") %>%
+                        mutate(pvalueAdj = p.adjust(pvalue, method = "fdr")) %>%
+                        column_to_rownames("ID")
                       p2 <- bind_cols(group_means, p2)
                       
                       return(list(param_anova = p2))
@@ -169,8 +171,10 @@ Univ_analisis <-
                       
                       non_param_kru <- data.frame(pvalue = apply(e, 2, function(x) {kruskal.test(x ~ as.factor(Group))$p.value}))
                       non_param_kru <- non_param_kru %>% 
+                        rownames_to_column("ID") %>%
                         mutate(pvalueAdj = p.adjust(pvalue, method = "fdr"), 
-                               Kruskal_Wallis_Rank_Sum = apply(e, 2, function(x) {kruskal.test(x ~ as.factor(Group))$statistic}))
+                               Kruskal_Wallis_Rank_Sum = apply(e, 2, function(x) {kruskal.test(x ~ as.factor(Group))$statistic})) %>%
+                        column_to_rownames("ID")
                       non_param_kru <- bind_cols(group_means, non_param_kru)
                       
                       return(list(non_param_kru = non_param_kru))
