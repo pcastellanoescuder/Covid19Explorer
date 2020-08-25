@@ -67,7 +67,8 @@ fluidRow(
                                      DT::dataTableOutput("matriu_kruskal")
                     )
                     ),
-           tabPanel("Boxplot", plotOutput("densityplots_proc_boxplot"))
+           tabPanel("Boxplot", plotOutput("univ_boxplot")),
+           tabPanel("Interactive Boxplot", plotlyOutput("univ_boxplot_int"))
          )
   )
 )

@@ -281,7 +281,7 @@ output$matriu_kruskal <- DT::renderDataTable({
 
 ##
 
-output$densityplots_proc_boxplot <- renderPlot({
+output$univ_boxplot <- renderPlot({
   
   mynum <- input$feat_uni
   myfac <- input$fact_uni
@@ -301,30 +301,30 @@ output$densityplots_proc_boxplot <- renderPlot({
   
   if(input$univariate_test %in% c("ttest", "anova")){
     type_boxplot <- "parametric"
-  } else{
+  } else {
     type_boxplot <- "nonparametric"
   }
   
   ##
   
-  if(input$var_ttest){
-    
-    ggstatsplot::ggbetweenstats(
-      data = data_subset,
-      x = my_factor,
-      y = my_numeric,
-      title = "",
-      messages = FALSE,
-      type = type_boxplot,
-      var.equal = TRUE,
-      pairwise.display = "all",
-      pairwise.comparisons = TRUE,
-      p.adjust.method = "holm",
-      results.subtitle = TRUE,
-      xlab = myfac,
-      ylab = mynum)
-    
-  } else{
+  # if(input$var_ttest){
+  #   
+  #   ggstatsplot::ggbetweenstats(
+  #     data = data_subset,
+  #     x = my_factor,
+  #     y = my_numeric,
+  #     title = "",
+  #     messages = FALSE,
+  #     type = type_boxplot,
+  #     var.equal = TRUE,
+  #     pairwise.display = "all",
+  #     pairwise.comparisons = TRUE,
+  #     p.adjust.method = "holm",
+  #     results.subtitle = TRUE,
+  #     xlab = myfac,
+  #     ylab = mynum)
+  #   
+  # } else{
     
     ggstatsplot::ggbetweenstats(
       data = data_subset,
@@ -340,7 +340,45 @@ output$densityplots_proc_boxplot <- renderPlot({
       results.subtitle = TRUE,
       xlab = myfac,
       ylab = mynum)
-  }
+  # }
+  
+})
+
+##
+
+output$univ_boxplot_int <- renderPlotly({
+  
+  mynum <- input$feat_uni
+  myfac <- input$fact_uni
+  
+  ##
+  
+  data_fac <- processedInput() %>%
+    dplyr::select_at(vars(matches(myfac)))
+  data_num <- processedInput() %>%
+    dplyr::select_at(vars(matches(mynum)))
+  data_id <- processedInput() %>%
+    dplyr::select(id)
+  data_subset <- cbind(data_id, data_fac, data_num) %>%
+    rename(id = 1, my_factor = 2, my_numeric = 3) %>%
+    mutate(my_factor = as.factor(my_factor))
+  
+  if(!is.null(input$contents_proc_rows_selected)){
+    data_subset <- data_subset[input$contents_proc_rows_selected ,]
+  } 
+  
+  ggplotly(
+    
+    ggplot(data_subset, aes(x = my_factor, y = my_numeric, label = id)) +
+      geom_jitter(alpha = 0.4, aes(fill = my_factor, color = my_factor)) +
+      geom_violin(alpha = 0.8) +
+      geom_boxplot(alpha = 0) +
+      xlab(myfac) +
+      ylab(mynum) +
+      theme_bw() +
+      theme(legend.title = element_blank())
+    
+  )
   
 })
 
