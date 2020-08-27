@@ -1,7 +1,7 @@
 
 library(tidyverse)
 
-data <- readxl::read_xlsx("abstract_1/poster/2020 07 14 Day_one_1802_no outliers.xlsx")
+data <- readxl::read_xlsx("~/FINAL_DATA/abstract_1/poster/2020 07 14 Day_one_1802_no outliers.xlsx")
 
 data_subset <- data %>%
   janitor::clean_names() %>% # clean column names
@@ -31,9 +31,7 @@ data_pca <- data_subset %>%
   mutate_at(vars(starts_with("tn_")), ~ (log10(. + 1) - mean(log10(. + 1), na.rm = TRUE))/sd(log10(. + 1), na.rm = TRUE)) # log scaling
 
 target <- data_subset %>%
-  select(id, f_outcome_final) %>%
-  mutate(f_outcome_final = as.factor(f_outcome_final)) %>%
-  as.data.frame()
+  select(id, f_outcome_final)
 
 pca_res <- mixOmics::pca(data_pca, center = TRUE, scale = TRUE)
 
@@ -66,19 +64,15 @@ ggplot(PCi, aes(x = PC1, y = PC2)) +
 
 library(POMA)
 
+# write.csv(target, "external_analysis/target.csv", row.names = FALSE)
+target <- read_csv("external_analysis/target.csv")
+
 poma_data <- PomaMSnSetClass(target = target, features = data_pca)
 rf_res <- poma_data %>%
   PomaImpute(method = "median") %>%
-  PomaRandForest(ntest = 20, ntree = 1)
+  PomaRandForest(ntest = 5, ntree = 500, nvar = 15)
 
-png("external_analysis/random_forest.png", res = 300, units = "cm", width = 22, height = 18)
-rf_res$
-dev.off()
-
-
-
-
-
-
-
+# png("external_analysis/random_forest.png", res = 300, units = "cm", width = 22, height = 18)
+rf_res$gini_plot + theme(text = element_text(size = 14))
+# dev.off()
 
