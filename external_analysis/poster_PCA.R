@@ -1,7 +1,7 @@
 
 library(tidyverse)
 
-data <- readxl::read_xlsx("~/abstract_1/poster/2020 07 14 Day_one_1802_no outliers.xlsx")
+data <- readxl::read_xlsx("abstract_1/poster/2020 07 14 Day_one_1802_no outliers.xlsx")
 
 data_subset <- data %>%
   janitor::clean_names() %>% # clean column names
@@ -31,20 +31,54 @@ data_pca <- data_subset %>%
   mutate_at(vars(starts_with("tn_")), ~ (log10(. + 1) - mean(log10(. + 1), na.rm = TRUE))/sd(log10(. + 1), na.rm = TRUE)) # log scaling
 
 target <- data_subset %>%
-  select(id, f_outcome_final)
+  select(id, f_outcome_final) %>%
+  mutate(f_outcome_final = as.factor(f_outcome_final)) %>%
+  as.data.frame()
 
-pca_res <- mixOmics::pca(data_pca, center = FALSE, scale = TRUE)
+pca_res <- mixOmics::pca(data_pca, center = TRUE, scale = TRUE)
 
 PCi <- tibble(id = target$id, group = target$f_outcome_final, as_tibble(pca_res$x))
 
-png("external_analysis/pca_poster.png", res = 200, units = "cm", width = 20, height = 18)
-ggplot(PCi, aes(x = PC1, y = PC2, color = group, shape = group, label = id)) + 
-  geom_point(size = 3, alpha = 0.8) + 
+lam <- (pca_res$sdev[1:2] * sqrt(nrow(PCi)))^0.775
+len <- t(t(pca_res$loadings$X[, 1:2]) * lam) * 0.8
+PCAloadings <- data.frame(pca_res$loadings$X, to_x = len[, 1], to_y = len[, 2]) %>%
+  arrange(desc(abs(PC1))) %>%
+  slice(1:5) %>%
+  rownames_to_column("ID") %>%
+  mutate(ID = stringr::str_remove(ID, "tn_"),
+         ID = stringr::str_remove(ID, "n_")) %>%
+  column_to_rownames("ID")
+
+# png("external_analysis/pca_poster.png", res = 300, units = "cm", width = 22, height = 18)
+ggplot(PCi, aes(x = PC1, y = PC2)) + 
+  geom_point(aes(color = group, shape = group), size = 3, alpha = 0.8) + 
   xlab(paste0("PC1 (", round(100 * (pca_res$explained_variance)[1], 2), "%)")) + 
   ylab(paste0("PC2 (", round(100 * (pca_res$explained_variance)[2],   2), "%)")) + 
-  stat_ellipse(aes(fill = group), geom = "polygon", type = "norm", alpha = 0.1, show.legend = FALSE) +
+  stat_ellipse(aes(fill = group), geom = "polygon", type = "norm", alpha = 0.25, show.legend = FALSE) +
+  geom_segment(data = PCAloadings, aes(x = 0, y = 0, xend = to_x, yend = to_y), arrow = arrow(length = unit(1/2, "picas")), color = "grey19") + 
+  ggrepel::geom_label_repel(data = PCAloadings, aes(x = to_x, y = to_y, label = rownames(PCAloadings)), size = 4) +
   theme_bw() +
   theme(legend.position = "top",
         legend.title = element_blank())
+# dev.off()
+
+## Random Forest
+
+library(POMA)
+
+poma_data <- PomaMSnSetClass(target = target, features = data_pca)
+rf_res <- poma_data %>%
+  PomaImpute(method = "median") %>%
+  PomaRandForest(ntest = 20, ntree = 1)
+
+png("external_analysis/random_forest.png", res = 300, units = "cm", width = 22, height = 18)
+rf_res$
 dev.off()
+
+
+
+
+
+
+
 
