@@ -62,7 +62,25 @@ DESFUN_PROC <- reactive({
 output$descriptive_proc <- renderDataTable({
   
   my_table <- DESFUN_PROC()$my_table
-  datatable(my_table, rownames = FALSE, options = list(scrollX = TRUE))
+  
+  DT::datatable(my_table,
+                filter = 'top',extensions = 'Buttons',
+                escape=FALSE,  rownames=FALSE, class = 'cell-border stripe',
+                options = list(
+                  scrollX = TRUE,
+                  dom = 'Bfrtip',
+                  buttons = 
+                    list("copy", "print", list(
+                      extend="collection",
+                      buttons=list(list(extend="csv",
+                                        filename="Covid19Explorer_descriptive_analysis"),
+                                   list(extend="excel",
+                                        filename="Covid19Explorer_descriptive_analysis"),
+                                   list(extend="pdf",
+                                        filename="Covid19Explorer_descriptive_analysis")),
+                      text="Dowload")),
+                  order=list(list(2, "desc")),
+                  pageLength = nrow(my_table)))
   
 })
 
