@@ -78,6 +78,7 @@ Univ_analisis <-
                         .names = "{col}"
                       )) %>%
                       ungroup() %>%
+                      filter(!is.na(group)) %>%
                       column_to_rownames("group") %>%
                       t() %>%
                       as_tibble() %>%
@@ -91,6 +92,7 @@ Univ_analisis <-
                         .names = "{col}"
                       )) %>%
                       ungroup() %>%
+                      filter(!is.na(group)) %>%
                       column_to_rownames("group") %>%
                       t() %>%
                       as_tibble() %>%
